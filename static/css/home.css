@@ -1,0 +1,535 @@
+body {
+  background-color: #f9fafb;
+  font-family: "Prompt", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* ---------- BASE ---------- */
+
+body {
+  background-color: #fff7fb; /* พื้นหลังทั้งหน้าพีชชมพูอ่อน ๆ */
+  font-family: "Prompt", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* ---------- HERO LAYOUT & BACKGROUND ---------- */
+
+.home-hero {
+  padding: 4.5rem 0 4rem;
+}
+
+@media (min-width: 992px) {
+  .home-hero {
+    padding: 5rem 0 5rem;
+  }
+}
+
+/* gradient โทนพีช–ชมพู ให้ไปด้วยกันทั้งหน้า */
+.hero-gradient {
+  background:
+    radial-gradient(circle at top left, rgba(255, 237, 213, 0.9), transparent 55%),
+    radial-gradient(circle at top right, rgba(254, 215, 226, 0.9), transparent 55%),
+    linear-gradient(180deg, #fff7fb 0%, #ffe9f0 55%, #ffffff 100%);
+}
+
+/* headline */
+.hero-title {
+  font-size: clamp(1.9rem, 3.1vw + 1rem, 2.7rem);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+/* คำบรรยาย */
+.hero-subtitle {
+  font-size: 0.98rem;
+  color: #4b5563;
+  max-width: 34rem;
+}
+
+/* badge เล็ก */
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #ea580c; /* ส้มพีช */
+  box-shadow: 0 8px 25px rgba(248, 113, 113, 0.25);
+}
+
+/* กล่อง search ให้อยู่ในธีมเดียวกับ hero */
+.hero-search {
+  background-color: #ffffff;
+  border-radius: 999px;
+  padding: 0.5rem;
+  box-shadow: 0 18px 45px rgba(248, 113, 113, 0.25);
+}
+
+.hero-search .form-control-lg,
+.hero-search .form-select-lg {
+  border: none;
+  box-shadow: none !important;
+  background-color: transparent;
+}
+
+.hero-search .form-control-lg:focus,
+.hero-search .form-select-lg:focus {
+  outline: none;
+}
+
+/* การ์ดโปรฝั่งขวา hero */
+.hero-banner-card {
+  border-radius: 1.5rem;
+  background-color: #fff7ed;
+  padding: 1.5rem 1.6rem;
+  border: 1px solid #fed7aa;
+  box-shadow: 0 16px 45px rgba(248, 113, 113, 0.3);
+}
+
+.banner-label {
+  display: inline-block;
+  padding: 0.1rem 0.7rem;
+  font-size: 0.75rem;
+  border-radius: 999px;
+  background-color: #f97316;
+  color: #fff7ed;
+}
+
+/* ---------- SB ECOSYSTEM PILL ---------- */
+
+.sb-ecosystem-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.96);
+  color: #e5e7eb;
+  box-shadow: 0 14px 40px rgba(15, 23, 42, 0.6);
+}
+
+.sb-pill-logo img {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: #020617;
+  object-fit: cover;
+}
+
+.sb-pill-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.sb-pill-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.sb-pill-sub {
+  font-size: 0.75rem;
+  opacity: 0.85;
+}
+
+/* ---------- CTA BUTTONS (Pastel) ---------- */
+
+.btn-hero-primary {
+  background: linear-gradient(135deg, #2563eb, #4f46e5);
+  border: none;
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.35);
+}
+
+.btn-hero-primary:hover {
+  background: linear-gradient(135deg, #1d4ed8, #4338ca);
+  color: #ffffff;
+}
+
+.btn-hero-secondary {
+  background: #fdf2ff;
+  border: 1px solid #f9a8d4;
+  color: #c026d3;
+  font-weight: 500;
+}
+
+.btn-hero-secondary:hover {
+  background: #fce7f3;
+  color: #be185d;
+}
+
+/* ---------- RIGHT HERO VISUAL ---------- */
+
+.hero-visual {
+  display: flex;
+  justify-content: center;
+}
+
+.hero-visual-card {
+  position: relative;
+  max-width: 420px;
+  width: 100%;
+  border-radius: 1.5rem;
+  padding: 1rem;
+  background: radial-gradient(circle at top, rgba(15, 23, 42, 0.9), #020617);
+  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.7);
+}
+
+/* ล้อมด้วยเส้นทองบาง ๆ ให้ฟีล Sur-Beau */
+.hero-visual-card::before {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: 1.35rem;
+  border: 1px solid rgba(250, 204, 21, 0.55);
+  pointer-events: none;
+}
+
+.hero-ecosystem-img {
+  width: 100%;
+  border-radius: 1.2rem;
+  display: block;
+}
+
+/* mobile spacing */
+@media (max-width: 767.98px) {
+  .hero-visual-card {
+    margin-top: 0.5rem;
+  }
+}
+
+
+/* CATEGORY STRIP */
+
+.category-strip {
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0.75rem 0;
+}
+
+.category-scroll {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  padding-bottom: 0.2rem;
+}
+
+.category-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+.category-scroll::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 999px;
+}
+
+.category-item {
+  border: none;
+  background: transparent;
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+  white-space: nowrap;
+}
+
+.category-item:hover {
+  background-color: #fee2e2;
+  transform: translateY(-1px);
+}
+
+.category-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  background-color: #fff7ed;
+}
+
+.category-label {
+  font-size: 0.85rem;
+}
+
+/* SECTIONS */
+
+.section-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+/* CLINIC CARDS */
+
+.clinic-card {
+  border-radius: 1.3rem;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+
+.clinic-photo {
+  height: 140px;
+  background-size: cover;
+  background-position: center;
+}
+
+.clinic-photo.placeholder {
+  background-image: linear-gradient(135deg, #fee2e2, #fef3c7);
+}
+
+/* PROMO CARDS */
+
+.promo-card {
+  border-radius: 1.2rem;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
+}
+
+.promo-price {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #16a34a;
+}
+/* Location modal */
+
+.location-btn {
+  border-radius: 999px;
+  border: none;
+  background-color: #f3f4f6;
+  font-size: 0.95rem;
+}
+
+.location-btn:hover {
+  background-color: #e5e7eb;
+}
+
+.popular-provinces {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.province-card {
+  border: none;
+  background: #ffffff;
+  padding: 0;
+  border-radius: 0.9rem;
+  overflow: hidden;
+  min-width: 120px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(15, 23, 42, 0.15);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.province-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.22);
+}
+
+.province-photo {
+  height: 90px;
+  background-size: cover;
+  background-position: center;
+}
+
+/* ใส่ gradient ง่าย ๆ แทนรูปจริงก่อน */
+.bg-bkk {
+  background-image: linear-gradient(135deg, #0f172a, #38bdf8);
+}
+.bg-chonburi {
+  background-image: linear-gradient(135deg, #0369a1, #fbbf24);
+}
+.bg-chiangmai {
+  background-image: linear-gradient(135deg, #f97316, #facc15);
+}
+.bg-phuket {
+  background-image: linear-gradient(135deg, #22c55e, #06b6d4);
+}
+
+.province-name {
+  padding: 0.4rem 0.55rem 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.province-item {
+  border: none;
+  background: transparent;
+  padding: 0.25rem 0;
+  width: 100%;
+  text-align: left;
+  border-radius: 0.4rem;
+}
+
+.province-item:hover {
+  background-color: #f3f4f6;
+}
+/* Logo บน Navbar */
+.sb-nav-logo {
+  height: 36px;
+  width: auto;
+  object-fit: contain;
+}
+.sb-nav-logo {
+  height: 40px;
+  width: auto;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.25));
+}
+/* ---------- HERO LAYOUT & BACKGROUND ---------- */
+
+.home-hero {
+  padding: 4.5rem 0 4rem;
+}
+
+@media (min-width: 992px) {
+  .home-hero {
+    padding: 5rem 0 5rem;
+  }
+}
+
+/* gradient แบบ landing page คลินิก */
+.hero-gradient {
+  background:
+    radial-gradient(circle at top left, rgba(251, 207, 232, 0.9), transparent 55%),
+    radial-gradient(circle at top right, rgba(191, 219, 254, 0.9), transparent 55%),
+    linear-gradient(180deg, #fff7fb 0%, #eef7ff 60%, #ffffff 100%);
+}
+
+/* headline */
+.hero-title {
+  font-size: clamp(1.9rem, 3.1vw + 1rem, 2.7rem);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.hero-subtitle {
+  font-size: 0.98rem;
+  color: #4b5563;
+}
+
+/* badge เล็ก */
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 8px 25px rgba(148, 163, 184, 0.35);
+}
+
+/* ---------- SB ECOSYSTEM PILL ---------- */
+
+.sb-ecosystem-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.9);
+  color: #e5e7eb;
+  box-shadow: 0 14px 40px rgba(15, 23, 42, 0.45);
+}
+
+.sb-pill-logo img {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: #020617;
+  object-fit: cover;
+}
+
+.sb-pill-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.sb-pill-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.sb-pill-sub {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+/* ---------- CTA BUTTONS (Pastel) ---------- */
+
+.btn-hero-primary {
+  background: linear-gradient(135deg, #2563eb, #4f46e5);
+  border: none;
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.35);
+}
+
+.btn-hero-primary:hover {
+  background: linear-gradient(135deg, #1d4ed8, #4338ca);
+  color: #ffffff;
+}
+
+.btn-hero-secondary {
+  background: #fdf2ff;
+  border: 1px solid #f9a8d4;
+  color: #c026d3;
+  font-weight: 500;
+}
+
+.btn-hero-secondary:hover {
+  background: #fce7f3;
+  color: #be185d;
+}
+
+/* ---------- RIGHT HERO VISUAL ---------- */
+
+.hero-visual {
+  display: flex;
+  justify-content: center;
+}
+
+.hero-visual-card {
+  position: relative;
+  max-width: 420px;
+  width: 100%;
+  border-radius: 1.5rem;
+  padding: 1rem;
+  background: radial-gradient(circle at top, rgba(15, 23, 42, 0.9), #020617);
+  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.7);
+}
+
+/* ล้อมด้วยเส้นทองบาง ๆ ให้ฟีล Sur-Beau */
+.hero-visual-card::before {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: 1.35rem;
+  border: 1px solid rgba(250, 204, 21, 0.55);
+  pointer-events: none;
+}
+
+.hero-ecosystem-img {
+  width: 100%;
+  border-radius: 1.2rem;
+  display: block;
+}
+
+/* mobile: spacing สวย ๆ */
+@media (max-width: 767.98px) {
+  .hero-visual-card {
+    margin-top: 0.5rem;
+  }
+}
+

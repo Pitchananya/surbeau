@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <title>SaleClinic.ai — ค้นหาคลินิกและโปรหัตถการ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --rose: #F2A7B0;
+      --rose-deep: #C96A7A;
+      --rose-pale: #FDF0F2;
+      --navy: #1A1F3A;
+      --navy-mid: #2E3558;
+      --gold: #C9A96E;
+      --gold-pale: #FBF4E9;
+      --cream: #FBF8F4;
+      --text: #1A1F3A;
+      --muted: #7A7D8C;
+      --border: rgba(26,31,58,0.1);
+      --card-bg: #FFFFFF;
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font-sans: 'Prompt', system-ui, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-sans);
+      font-weight: 300;
+      background: var(--cream);
+      color: var(--text);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(251,248,244,0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 1.5rem;
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px; gap: 2rem;
+    }
+    .nav-logo {
+      font-family: var(--font-serif);
+      font-size: 1.5rem; font-weight: 600;
+      color: var(--navy); text-decoration: none;
+      letter-spacing: -0.01em;
+    }
+    .nav-logo em { color: var(--rose-deep); font-style: italic; }
+    .nav-links { display: flex; align-items: center; gap: 2rem; }
+    .nav-links a {
+      font-size: 0.82rem; font-weight: 400; letter-spacing: 0.05em;
+      text-transform: uppercase; color: var(--muted); text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--navy); }
+    .nav-actions { display: flex; align-items: center; gap: 0.75rem; }
+    .btn-ghost {
+      font-family: var(--font-sans); font-size: 0.82rem; font-weight: 400;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      color: var(--navy); background: none;
+      border: 1px solid var(--border); border-radius: 2px;
+      padding: 0.45rem 1.2rem; cursor: pointer; text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-ghost:hover { border-color: var(--navy); background: var(--navy); color: #fff; }
+    .btn-primary {
+      font-family: var(--font-sans); font-size: 0.82rem; font-weight: 500;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      color: #fff; background: var(--rose-deep);
+      border: 1px solid var(--rose-deep); border-radius: 2px;
+      padding: 0.45rem 1.4rem; cursor: pointer; text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-primary:hover { background: var(--navy); border-color: var(--navy); }
+
+    /* HERO */
+    .hero {
+      max-width: 1200px; margin: 0 auto;
+      padding: 5rem 1.5rem 4rem;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center;
+    }
+    .hero-label {
+      font-size: 0.72rem; font-weight: 500; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--rose-deep);
+      display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.25rem;
+    }
+    .hero-label::before {
+      content: ''; display: inline-block;
+      width: 2rem; height: 1px; background: var(--rose-deep);
+    }
+    .hero h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(2.6rem, 4vw, 4rem);
+      font-weight: 600; line-height: 1.15;
+      color: var(--navy); margin-bottom: 1.25rem;
+    }
+    .hero h1 em { color: var(--rose-deep); font-style: italic; }
+    .hero-sub {
+      font-size: 0.95rem; color: var(--muted); line-height: 1.75;
+      margin-bottom: 2rem; max-width: 42ch;
+    }
+
+    /* SEARCH */
+    .search-wrap {
+      display: flex; gap: 0; border: 1px solid var(--border);
+      border-radius: 2px; overflow: hidden; background: #fff;
+      box-shadow: 0 2px 20px rgba(26,31,58,0.06);
+    }
+    .search-loc {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0 1.2rem; border-right: 1px solid var(--border);
+      background: var(--gold-pale); cursor: pointer;
+      font-size: 0.85rem; color: var(--navy); white-space: nowrap;
+      min-width: 140px;
+    }
+    .search-loc svg { width: 14px; height: 14px; opacity: 0.5; }
+    .search-input {
+      flex: 1; border: none; outline: none; padding: 1rem 1.25rem;
+      font-family: var(--font-sans); font-size: 0.9rem; font-weight: 300;
+      color: var(--navy); background: transparent;
+    }
+    .search-input::placeholder { color: var(--muted); }
+    .search-btn {
+      background: var(--navy); color: #fff;
+      border: none; padding: 0 1.75rem; cursor: pointer;
+      font-family: var(--font-sans); font-size: 0.8rem;
+      letter-spacing: 0.05em; text-transform: uppercase; font-weight: 500;
+      transition: background 0.2s;
+    }
+    .search-btn:hover { background: var(--rose-deep); }
+
+    /* HERO VISUAL */
+    .hero-visual { position: relative; }
+    .hero-card-stack { position: relative; height: 380px; }
+    .hero-banner {
+      position: absolute; inset: 0;
+      background: var(--navy);
+      border-radius: 4px; padding: 2rem;
+      color: #fff; display: flex; flex-direction: column; justify-content: flex-end;
+      overflow: hidden;
+    }
+    .hero-banner::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(201,169,110,0.15) 0%, rgba(242,167,176,0.1) 100%);
+    }
+    .hero-banner-accent {
+      position: absolute; top: -40px; right: -40px;
+      width: 200px; height: 200px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(201,169,110,0.25) 0%, transparent 70%);
+    }
+    .hero-banner-tag {
+      font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 0.75rem;
+    }
+    .hero-banner h3 {
+      font-family: var(--font-serif); font-size: 1.8rem; font-weight: 600;
+      line-height: 1.2; margin-bottom: 0.75rem; position: relative;
+    }
+    .hero-banner p { font-size: 0.82rem; opacity: 0.7; margin-bottom: 1.25rem; position: relative; }
+    .hero-banner-btn {
+      display: inline-block; background: var(--gold);
+      color: var(--navy); padding: 0.5rem 1.25rem;
+      border-radius: 2px; font-size: 0.78rem; font-weight: 500;
+      letter-spacing: 0.04em; text-transform: uppercase; text-decoration: none;
+      transition: all 0.2s; position: relative;
+    }
+    .hero-banner-btn:hover { background: #fff; }
+
+    /* FLOAT STATS */
+    .float-stat {
+      position: absolute; background: #fff;
+      border-radius: 4px; padding: 0.75rem 1rem;
+      box-shadow: 0 8px 30px rgba(26,31,58,0.12);
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .float-stat-1 { top: -18px; right: 24px; }
+    .float-stat-2 { bottom: -18px; left: 16px; }
+    .stat-icon {
+      width: 36px; height: 36px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem;
+    }
+    .stat-icon.pink { background: var(--rose-pale); }
+    .stat-icon.gold { background: var(--gold-pale); }
+    .stat-num { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 600; color: var(--navy); line-height: 1; }
+    .stat-lbl { font-size: 0.72rem; color: var(--muted); margin-top: 1px; }
+
+    /* CATEGORIES */
+    .categories-section { padding: 3rem 0; border-top: 1px solid var(--border); }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+    .section-label {
+      font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;
+    }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .cat-scroll {
+      display: flex; gap: 0.75rem; overflow-x: auto; padding-bottom: 0.5rem;
+    }
+    .cat-scroll::-webkit-scrollbar { display: none; }
+    .cat-item {
+      flex-shrink: 0; display: flex; flex-direction: column; align-items: center;
+      gap: 0.5rem; padding: 1rem 1.25rem; background: #fff;
+      border: 1px solid var(--border); border-radius: 2px; cursor: pointer;
+      transition: all 0.2s; text-align: center; min-width: 110px;
+    }
+    .cat-item:hover { border-color: var(--rose-deep); background: var(--rose-pale); }
+    .cat-icon { font-size: 1.4rem; }
+    .cat-name { font-size: 0.75rem; font-weight: 400; color: var(--navy); line-height: 1.3; }
+
+    /* CLINICS */
+    .section-head {
+      display: flex; justify-content: space-between; align-items: baseline;
+      margin-bottom: 1.75rem;
+    }
+    .section-head h2 {
+      font-family: var(--font-serif); font-size: 2rem; font-weight: 600;
+      color: var(--navy);
+    }
+    .section-head h2 em { color: var(--rose-deep); font-style: italic; }
+    .section-head a {
+      font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--rose-deep); text-decoration: none; border-bottom: 1px solid var(--rose);
+    }
+    .clinic-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+    .clinic-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 4px; overflow: hidden; transition: all 0.25s;
+    }
+    .clinic-card:hover { box-shadow: 0 12px 40px rgba(26,31,58,0.1); transform: translateY(-2px); }
+    .clinic-photo {
+      height: 180px; background: var(--navy);
+      position: relative; overflow: hidden;
+    }
+    .clinic-photo-bg {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, var(--navy-mid) 0%, var(--navy) 100%);
+    }
+    .clinic-photo-1 .clinic-photo-bg { background: linear-gradient(135deg, #3A2040 0%, var(--navy) 100%); }
+    .clinic-photo-2 .clinic-photo-bg { background: linear-gradient(135deg, #1A3040 0%, var(--navy) 100%); }
+    .clinic-photo-3 .clinic-photo-bg { background: linear-gradient(135deg, #2A1E3A 0%, #1A1F3A 100%); }
+    .clinic-badge-wrap {
+      position: absolute; top: 1rem; left: 1rem;
+    }
+    .clinic-badge {
+      background: rgba(255,255,255,0.15); backdrop-filter: blur(8px);
+      color: #fff; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 0.25rem 0.7rem; border-radius: 1px; border: 1px solid rgba(255,255,255,0.2);
+    }
+    .clinic-rating-wrap {
+      position: absolute; bottom: 1rem; right: 1rem;
+      background: rgba(255,255,255,0.12); backdrop-filter: blur(8px);
+      padding: 0.3rem 0.6rem; border-radius: 2px;
+      font-size: 0.75rem; color: var(--gold); font-weight: 500;
+    }
+    .clinic-body { padding: 1.25rem; }
+    .clinic-name {
+      font-family: var(--font-serif); font-size: 1.1rem; font-weight: 600;
+      color: var(--navy); margin-bottom: 0.25rem; line-height: 1.3;
+    }
+    .clinic-meta { font-size: 0.78rem; color: var(--muted); margin-bottom: 0.75rem; }
+    .clinic-price {
+      font-size: 0.85rem; color: var(--navy); font-weight: 500; margin-bottom: 1rem;
+    }
+    .clinic-price span { color: var(--rose-deep); }
+    .btn-outline {
+      display: block; text-align: center; text-decoration: none;
+      border: 1px solid var(--border); color: var(--navy);
+      font-size: 0.78rem; letter-spacing: 0.05em; text-transform: uppercase;
+      padding: 0.6rem; border-radius: 2px; transition: all 0.2s;
+    }
+    .btn-outline:hover { border-color: var(--rose-deep); color: var(--rose-deep); }
+
+    /* PROMOS */
+    .promo-section { padding: 4rem 0; background: var(--navy); }
+    .promo-section .section-label { color: rgba(255,255,255,0.4); }
+    .promo-section .section-label::after { background: rgba(255,255,255,0.1); }
+    .promo-section h2 {
+      font-family: var(--font-serif); font-size: 2rem; font-weight: 600; color: #fff;
+      margin-bottom: 2rem;
+    }
+    .promo-section h2 em { color: var(--gold); font-style: italic; }
+    .promo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(255,255,255,0.08); }
+    .promo-card {
+      background: rgba(255,255,255,0.04);
+      padding: 1.75rem; transition: background 0.2s;
+    }
+    .promo-card:hover { background: rgba(255,255,255,0.08); }
+    .promo-clinic { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.5rem; }
+    .promo-title { font-family: var(--font-serif); font-size: 1.2rem; color: #fff; margin-bottom: 0.75rem; line-height: 1.3; }
+    .promo-orig { font-size: 0.8rem; color: rgba(255,255,255,0.4); text-decoration: line-through; margin-bottom: 0.25rem; }
+    .promo-price { font-size: 1.5rem; font-family: var(--font-serif); color: var(--gold); font-weight: 600; }
+    .promo-save { display: inline-block; font-size: 0.7rem; background: var(--rose-deep); color: #fff; padding: 0.2rem 0.6rem; border-radius: 1px; margin-left: 0.5rem; vertical-align: middle; }
+    .promo-note { font-size: 0.78rem; color: rgba(255,255,255,0.4); margin: 0.75rem 0; }
+    .btn-promo {
+      display: block; text-align: center; text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.8);
+      font-size: 0.75rem; letter-spacing: 0.05em; text-transform: uppercase;
+      padding: 0.6rem; border-radius: 2px; transition: all 0.2s;
+    }
+    .btn-promo:hover { background: var(--rose-deep); border-color: var(--rose-deep); color: #fff; }
+
+    /* ECOSYSTEM */
+    .eco-section { padding: 5rem 0; }
+    .eco-header { max-width: 540px; margin-bottom: 3rem; }
+    .eco-header h2 { font-family: var(--font-serif); font-size: 2.2rem; font-weight: 600; color: var(--navy); line-height: 1.2; margin-bottom: 1rem; }
+    .eco-header p { font-size: 0.9rem; color: var(--muted); }
+    .eco-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: var(--border); }
+    .eco-card { background: #fff; padding: 2rem 1.75rem; }
+    .eco-num {
+      font-family: var(--font-serif); font-size: 3rem; font-weight: 600;
+      color: var(--rose-pale); line-height: 1; margin-bottom: 1rem;
+      -webkit-text-stroke: 1px var(--rose);
+    }
+    .eco-title { font-weight: 500; font-size: 0.95rem; color: var(--navy); margin-bottom: 0.75rem; }
+    .eco-desc { font-size: 0.82rem; color: var(--muted); margin-bottom: 1rem; line-height: 1.65; }
+    .eco-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .eco-tag {
+      font-size: 0.7rem; padding: 0.2rem 0.6rem;
+      background: var(--cream); border: 1px solid var(--border);
+      border-radius: 1px; color: var(--muted);
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 500;
+      background: rgba(26,31,58,0.5); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center; padding: 1.5rem;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: #fff; border-radius: 4px; width: 100%; max-width: 600px;
+      max-height: 80vh; overflow-y: auto;
+    }
+    .modal-head {
+      padding: 1.5rem; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .modal-head h5 { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 600; color: var(--navy); }
+    .modal-close { background: none; border: none; cursor: pointer; font-size: 1.3rem; color: var(--muted); }
+    .modal-body { padding: 1.5rem; }
+    .prov-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 0.75rem; margin-bottom: 1.5rem; }
+    .prov-card {
+      cursor: pointer; border: 1px solid var(--border); border-radius: 2px; overflow: hidden;
+      transition: all 0.2s; text-align: center;
+    }
+    .prov-card:hover { border-color: var(--rose-deep); }
+    .prov-img { height: 70px; background: var(--navy); }
+    .prov-img.bkk { background: linear-gradient(135deg, #2E3558, #1A1F3A); }
+    .prov-img.cnx { background: linear-gradient(135deg, #3A2820, #1A1F3A); }
+    .prov-img.chb { background: linear-gradient(135deg, #1A2E3A, #1A1F3A); }
+    .prov-img.hkt { background: linear-gradient(135deg, #1A3028, #1A1F3A); }
+    .prov-name { padding: 0.5rem; font-size: 0.78rem; color: var(--navy); }
+    .prov-list { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .prov-item {
+      background: none; border: 1px solid var(--border);
+      border-radius: 2px; padding: 0.3rem 0.75rem;
+      font-size: 0.8rem; color: var(--navy); cursor: pointer; transition: all 0.2s;
+    }
+    .prov-item:hover { border-color: var(--rose-deep); color: var(--rose-deep); }
+    .modal-foot { padding: 1rem 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; }
+
+    footer { padding: 2rem 1.5rem; border-top: 1px solid var(--border); }
+    .footer-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+    .footer-inner p { font-size: 0.78rem; color: var(--muted); }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; gap: 2.5rem; padding: 3rem 1.5rem; }
+      .hero-visual { display: none; }
+      .clinic-grid { grid-template-columns: 1fr 1fr; }
+      .promo-grid { grid-template-columns: 1fr; }
+      .eco-grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+    }
+    @media (max-width: 600px) {
+      .clinic-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="/">Sale<em>Clinic</em>.ai</a>
+    <div class="nav-links">
+      <a href="/">หน้าแรก</a>
+      <a href="/for-sale">สำหรับเซลล์</a>
+      <a href="/clinic/add-campaign">สำหรับคลินิก</a>
+    </div>
+    <div class="nav-actions">
+      <a href="/login-sale" class="btn-ghost">เข้าสู่ระบบ</a>
+      <a href="/register-sale" class="btn-primary">สมัครเป็นเซลล์</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <section>
+    <div class="hero">
+      <div>
+        <div class="hero-label">Surgery &amp; Beauty Platform</div>
+        <h1>อยากทำสวย<br>ที่ไหน<em>ดี?</em></h1>
+        <p class="hero-sub">รวมคลินิกและโปรหัตถการยอดนิยมไว้ในที่เดียว เลือกตามทำเล ประเภท และรีวิวจากผู้ใช้จริง</p>
+        <div class="search-wrap">
+          <button class="search-loc" id="loc-btn" onclick="document.getElementById('modal-loc').classList.add('open')">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1.5C5.5 1.5 3.5 3.5 3.5 6c0 3.5 4.5 8.5 4.5 8.5s4.5-5 4.5-8.5c0-2.5-2-4.5-4.5-4.5z"/><circle cx="8" cy="6" r="1.5"/></svg>
+            <span id="loc-label">ทั่วประเทศ</span>
+          </button>
+          <input class="search-input" placeholder="ค้นหาคลินิก / โปรหัตถการ..." id="kw-input">
+          <button class="search-btn">ค้นหา</button>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="hero-card-stack">
+          <div class="hero-banner">
+            <div class="hero-banner-accent"></div>
+            <div class="hero-banner-tag">โปรเปิดตัวคลินิกใหม่</div>
+            <h3>รีวิวดี ทำเล<br>ใกล้คุณ</h3>
+            <p>รวมคลินิกพันธมิตร พร้อมโปรโบท็อกซ์ ฟิลเลอร์ และเลเซอร์</p>
+            <a href="#" class="hero-banner-btn">ดูโปรแนะนำวันนี้</a>
+          </div>
+          <div class="float-stat float-stat-1">
+            <div class="stat-icon pink">💉</div>
+            <div>
+              <div class="stat-num">120+</div>
+              <div class="stat-lbl">คลินิกพันธมิตร</div>
+            </div>
+          </div>
+          <div class="float-stat float-stat-2">
+            <div class="stat-icon gold">⭐</div>
+            <div>
+              <div class="stat-num">4.8</div>
+              <div class="stat-lbl">คะแนนเฉลี่ย</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="categories-section">
+    <div class="container">
+      <div class="section-label">หมวดหมู่</div>
+      <div class="cat-scroll">
+        <div class="cat-item"><div class="cat-icon">💉</div><div class="cat-name">โบท็อกซ์ / ฟิลเลอร์</div></div>
+        <div class="cat-item"><div class="cat-icon">✨</div><div class="cat-name">เลเซอร์หน้าใส</div></div>
+        <div class="cat-item"><div class="cat-icon">😌</div><div class="cat-name">ทรีตเมนต์ผิวหน้า</div></div>
+        <div class="cat-item"><div class="cat-icon">👃</div><div class="cat-name">ศัลยกรรมจมูก</div></div>
+        <div class="cat-item"><div class="cat-icon">👁️</div><div class="cat-name">ตา 2 ชั้น</div></div>
+        <div class="cat-item"><div class="cat-icon">🧴</div><div class="cat-name">รักษาสิว / หลุมสิว</div></div>
+        <div class="cat-item"><div class="cat-icon">⚖️</div><div class="cat-name">สลายไขมัน</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-section" style="padding: 4rem 0; background: #fff;">
+    <div class="container">
+      <div class="section-head">
+        <h2>คลินิก<em>แนะนำ</em></h2>
+        <a href="#">ดูทั้งหมด →</a>
+      </div>
+      <div class="clinic-grid">
+        <div class="clinic-card">
+          <div class="clinic-photo clinic-photo-1">
+            <div class="clinic-photo-bg"></div>
+            <div class="clinic-badge-wrap"><span class="clinic-badge">New</span></div>
+            <div class="clinic-rating-wrap">★ 4.8 · 120 รีวิว</div>
+          </div>
+          <div class="clinic-body">
+            <div class="clinic-name">Glow Up Clinic สาขาสยาม</div>
+            <div class="clinic-meta">โบท็อกซ์ / ฟิลเลอร์ · BTS สยาม</div>
+            <div class="clinic-price">เริ่มต้น <span>4,990 บาท</span> / เคส</div>
+            <a href="#" class="btn-outline">ดูโปรและรายละเอียด</a>
+          </div>
+        </div>
+        <div class="clinic-card">
+          <div class="clinic-photo clinic-photo-2">
+            <div class="clinic-photo-bg"></div>
+            <div class="clinic-badge-wrap"><span class="clinic-badge">ยอดนิยม</span></div>
+            <div class="clinic-rating-wrap">★ 4.7 · 89 รีวิว</div>
+          </div>
+          <div class="clinic-body">
+            <div class="clinic-name">Clear Skin Clinic พระราม 9</div>
+            <div class="clinic-meta">เลเซอร์รักษาสิว · MRT พระราม 9</div>
+            <div class="clinic-price">คอร์สเริ่มต้น <span>3,500 บาท</span></div>
+            <a href="#" class="btn-outline">ดูโปรและรายละเอียด</a>
+          </div>
+        </div>
+        <div class="clinic-card">
+          <div class="clinic-photo clinic-photo-3">
+            <div class="clinic-photo-bg"></div>
+            <div class="clinic-badge-wrap"><span class="clinic-badge">Premium</span></div>
+            <div class="clinic-rating-wrap">★ 4.9 · 52 รีวิว</div>
+          </div>
+          <div class="clinic-body">
+            <div class="clinic-name">Perfect Nose Center ทองหล่อ</div>
+            <div class="clinic-meta">ศัลยกรรมจมูก · ทองหล่อ</div>
+            <div class="clinic-price">ผ่อน 0% <span>สูงสุด 10 เดือน</span></div>
+            <a href="#" class="btn-outline">ดูโปรและรายละเอียด</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="promo-section">
+    <div class="container">
+      <div class="section-label">โปรโมชัน</div>
+      <h2>โปร<em>ยอดนิยม</em>ในระบบ</h2>
+      <div class="promo-grid">
+        <div class="promo-card">
+          <div class="promo-clinic">Glow Up Clinic</div>
+          <div class="promo-title">โบท็อกซ์หน้าผาก + หางตา</div>
+          <div class="promo-orig">ปกติ 9,990 บาท</div>
+          <div><span class="promo-price">4,990 บาท</span><span class="promo-save">−50%</span></div>
+          <div class="promo-note">ใช้ได้ถึง 30 เม.ย. 2569</div>
+          <a href="#" class="btn-promo">ดูรายละเอียด</a>
+        </div>
+        <div class="promo-card">
+          <div class="promo-clinic">Clear Skin Clinic</div>
+          <div class="promo-title">เลเซอร์รักษาหลุมสิว 3 ครั้ง</div>
+          <div class="promo-orig">ปกติ 15,000 บาท</div>
+          <div><span class="promo-price">9,900 บาท</span></div>
+          <div class="promo-note">เหมาะสำหรับคนมีรอยสิวเรื้อรัง</div>
+          <a href="#" class="btn-promo">ดูรายละเอียด</a>
+        </div>
+        <div class="promo-card">
+          <div class="promo-clinic">Shape Fit Clinic</div>
+          <div class="promo-title">แพ็กเกจสลายไขมันเหนียง</div>
+          <div class="promo-orig">ปกติ 12,000 บาท</div>
+          <div><span class="promo-price">6,900 บาท</span></div>
+          <div class="promo-note">แถมปรึกษาแพทย์ฟรี 1 ครั้ง</div>
+          <a href="#" class="btn-promo">ดูรายละเอียด</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="eco-section">
+    <div class="container">
+      <div class="eco-header">
+        <div class="section-label">SB AI Ecosystem</div>
+        <h2>SaleClinic.ai<br>x SB Command</h2>
+        <p>เชื่อมแพลตฟอร์มค้นหาคลินิกเข้ากับ AI Layer สำหรับ Dynamic Pricing, Booking และ Intelligence</p>
+      </div>
+      <div class="eco-grid">
+        <div class="eco-card">
+          <div class="eco-num">01</div>
+          <div class="eco-title">App Layer</div>
+          <div class="eco-desc">ชั้นแอปที่ผู้ใช้เห็น ทั้งค้นหาคลินิก ดูโปร และจองหัตถการ</div>
+          <div class="eco-tags"><span class="eco-tag">Web / Mobile</span><span class="eco-tag">Search & Booking</span><span class="eco-tag">Sale Dashboard</span></div>
+        </div>
+        <div class="eco-card">
+          <div class="eco-num">02</div>
+          <div class="eco-title">SB AI Layer</div>
+          <div class="eco-desc">โมเดล AI แยกตามฟังก์ชัน: Booking, Marketing, Pricing, Trust & Finance</div>
+          <div class="eco-tags"><span class="eco-tag">Luna-AI</span><span class="eco-tag">Mira-AI</span><span class="eco-tag">Oro-AI</span><span class="eco-tag">Veda-AI</span></div>
+        </div>
+        <div class="eco-card">
+          <div class="eco-num">03</div>
+          <div class="eco-title">Business Intelligence</div>
+          <div class="eco-desc">KPI, ROI และ Insight แบบเรียลไทม์สำหรับเจ้าของคลินิกและนักลงทุน</div>
+          <div class="eco-tags"><span class="eco-tag">AI Dashboard</span><span class="eco-tag">Investor Console</span><span class="eco-tag">Data Lake</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="modal-overlay" id="modal-loc">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h5>เลือกพื้นที่</h5>
+      <button class="modal-close" onclick="document.getElementById('modal-loc').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:0.78rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;">ปลายทางยอดนิยม</div>
+      <div class="prov-grid">
+        <div class="prov-card" data-p="กรุงเทพมหานคร"><div class="prov-img bkk"></div><div class="prov-name">กรุงเทพฯ</div></div>
+        <div class="prov-card" data-p="เชียงใหม่"><div class="prov-img cnx"></div><div class="prov-name">เชียงใหม่</div></div>
+        <div class="prov-card" data-p="ชลบุรี"><div class="prov-img chb"></div><div class="prov-name">ชลบุรี</div></div>
+        <div class="prov-card" data-p="ภูเก็ต"><div class="prov-img hkt"></div><div class="prov-name">ภูเก็ต</div></div>
+      </div>
+      <div style="font-size:0.78rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:0.75rem;">จังหวัดทั้งหมด</div>
+      <div class="prov-list">
+        <button class="prov-item" data-p="">ทั่วประเทศ</button>
+        <button class="prov-item" data-p="กรุงเทพมหานคร">กรุงเทพมหานคร</button>
+        <button class="prov-item" data-p="นนทบุรี">นนทบุรี</button>
+        <button class="prov-item" data-p="ปทุมธานี">ปทุมธานี</button>
+        <button class="prov-item" data-p="สมุทรปราการ">สมุทรปราการ</button>
+        <button class="prov-item" data-p="ชลบุรี">ชลบุรี</button>
+        <button class="prov-item" data-p="เชียงใหม่">เชียงใหม่</button>
+        <button class="prov-item" data-p="ภูเก็ต">ภูเก็ต</button>
+        <button class="prov-item" data-p="ขอนแก่น">ขอนแก่น</button>
+        <button class="prov-item" data-p="เชียงราย">เชียงราย</button>
+        <button class="prov-item" data-p="ระยอง">ระยอง</button>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-ghost" onclick="document.getElementById('modal-loc').classList.remove('open')">ปิด</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <p>© 2026 SaleClinic.ai — Surgery &amp; Beauty Platform</p>
+    <p><a href="/for-sale" style="color:var(--rose-deep);text-decoration:none;font-size:0.78rem;">สมัครเป็นเซลล์ →</a></p>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.prov-card, .prov-item').forEach(el => {
+    el.addEventListener('click', () => {
+      const p = el.dataset.p;
+      document.getElementById('loc-label').textContent = p || 'ทั่วประเทศ';
+      document.getElementById('modal-loc').classList.remove('open');
+    });
+  });
+  document.getElementById('modal-loc').addEventListener('click', e => {
+    if (e.target === e.currentTarget) e.currentTarget.classList.remove('open');
+  });
+</script>
+</body>
+</html>

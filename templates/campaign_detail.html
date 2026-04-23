@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <title>รายละเอียดแคมเปญ | Sur Beau</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    body{font-family:'Prompt',sans-serif;background:#0f1224;color:#fff;margin:0;padding:2rem;min-height:100vh}
+    .card{max-width:600px;margin:2rem auto;background:#1a1f3a;border:1px solid rgba(201,169,110,.2);border-radius:8px;padding:2rem}
+    h1{font-size:1.5rem;color:#c9a96e;margin-bottom:1rem}
+    .meta{font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:.5rem}
+    .price{font-size:2rem;color:#c9a96e;margin:1rem 0}
+    .orig{text-decoration:line-through;font-size:1rem;color:rgba(255,255,255,.3);margin-left:.5rem}
+    .btn{display:block;text-align:center;background:#c9a96e;color:#0f1224;padding:.85rem;border-radius:4px;text-decoration:none;font-weight:500;margin-top:1.5rem;border:none;width:100%;cursor:pointer;font-family:'Prompt',sans-serif;font-size:.9rem}
+    .lead-form{margin-top:1.5rem;border-top:1px solid rgba(255,255,255,.1);padding-top:1.5rem}
+    .lead-form h3{color:#c9a96e;margin-bottom:1rem;font-size:1rem}
+    .field{margin-bottom:1rem}
+    .field label{display:block;font-size:.8rem;color:rgba(255,255,255,.5);margin-bottom:.35rem}
+    .field input,.field textarea{width:100%;padding:.7rem;background:#111827;border:1px solid rgba(255,255,255,.1);border-radius:4px;color:#fff;font-family:'Prompt',sans-serif;font-size:.88rem;box-sizing:border-box}
+    .alert{padding:.75rem 1rem;border-radius:4px;margin-bottom:1rem;font-size:.85rem}
+    .alert-success{background:rgba(42,125,79,.2);border:1px solid #2a7d4f;color:#4ade80}
+    .alert-error{background:rgba(201,106,122,.15);border:1px solid #c96a7a;color:#f87171}
+    #loading{text-align:center;color:rgba(255,255,255,.4);font-size:.85rem}
+  </style>
+</head>
+<body>
+<div class="card" id="campaign-container">
+  <div id="loading">กำลังโหลด...</div>
+</div>
+
+<script>
+const urlParts = window.location.pathname.split('/');
+const campaignId = urlParts[urlParts.length - 1];
+const params = new URLSearchParams(window.location.search);
+const refSaleId = params.get('ref');
+
+async function loadCampaign() {
+  try {
+    const res = await fetch(`/guest/campaigns/${campaignId}`);
+    if (!res.ok) throw new Error('not found');
+    const d = await res.json();
+
+    document.getElementById('campaign-container').innerHTML = `
+      <h1>${d.title}</h1>
+      ${d.clinic ? `<div class="meta">${d.clinic.name} · ${d.clinic.province || ''}</div>` : ''}
+      <div class="meta">${d.description || ''}</div>
+      <div class="price">
+        ${(d.promo_price||0).toLocaleString()} บาท
+        <span class="orig">${(d.normal_price||0).toLocaleString()} บาท</span>
+      </div>
+      ${refSaleId ? `<div class="meta" style="color:#c9a96e">แนะนำโดย Sale #${refSaleId}</div>` : ''}
+
+      <div class="lead-form">
+        <h3>สนใจโปรนี้ — กรอกข้อมูลเพื่อให้คลินิกติดต่อกลับ</h3>
+        <div id="form-alert"></div>
+        <div class="field"><label>ชื่อ-นามสกุล *</label><input id="f-name" placeholder="สมชาย ใจดี"></div>
+        <div class="field"><label>เบอร์โทรศัพท์ *</label><input id="f-phone" type="tel" placeholder="08xxxxxxxx"></div>
+        <div class="field"><label>หมายเหตุ (ถ้ามี)</label><textarea id="f-note" rows="2" placeholder="เช่น สนใจนัดเสาร์นี้"></textarea></div>
+        <button class="btn" onclick="submitLead(${d.id})">ส่งข้อมูลสนใจโปรนี้</button>
+      </div>
+    `;
+  } catch(e) {
+    document.getElementById('campaign-container').innerHTML = '<div class="alert alert-error">ไม่พบแคมเปญนี้</div>';
+  }
+}
+
+async function submitLead(campId) {
+  const name  = document.getElementById('f-name').value.trim();
+  const phone = document.getElementById('f-phone').value.trim();
+  const note  = document.getElementById('f-note').value.trim();
+  const alertEl = document.getElementById('form-alert');
+
+  if (!name || !phone) {
+    alertEl.innerHTML = '<div class="alert alert-error">กรุณากรอกชื่อและเบอร์โทร</div>';
+    return;
+  }
+
+  const body = { campaign_id: campId, customer_name: name,
+                 customer_phone: phone, note };
+  if (refSaleId) body.sale_id = parseInt(refSaleId);
+
+  try {
+    const res = await fetch('/guest/lead', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(body),
+      credentials: 'include',
+    });
+    const data = await res.json();
+    if (res.status === 201) {
+      alertEl.innerHTML = '<div class="alert alert-success">ส่งข้อมูลสำเร็จ! คลินิกจะติดต่อกลับเร็วๆ นี้</div>';
+    } else {
+      alertEl.innerHTML = `<div class="alert alert-error">${data.error || 'เกิดข้อผิดพลาด'}</div>`;
+    }
+  } catch {
+    alertEl.innerHTML = '<div class="alert alert-error">ไม่สามารถเชื่อมต่อได้</div>';
+  }
+}
+
+loadCampaign();
+</script>
+</body>
+</html>

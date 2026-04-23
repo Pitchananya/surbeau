@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <title>สมัครเป็นเซลล์ | SaleClinic.ai</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400&family=Prompt:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --rose: #F2A7B0; --rose-deep: #C96A7A; --rose-pale: #FDF0F2;
+      --navy: #1A1F3A; --gold: #C9A96E; --cream: #FBF8F4;
+      --muted: #7A7D8C; --border: rgba(26,31,58,0.12);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Prompt', system-ui, sans-serif; font-weight: 300;
+      min-height: 100vh; display: grid; grid-template-columns: 5fr 7fr;
+      background: var(--navy);
+    }
+    .left-panel {
+      position: relative; overflow: hidden; background: var(--navy);
+      display: flex; flex-direction: column; justify-content: space-between;
+      padding: 2.5rem;
+    }
+    .left-bg {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 20% 20%, rgba(201,169,110,0.18) 0%, transparent 55%),
+                  radial-gradient(ellipse at 90% 90%, rgba(242,167,176,0.12) 0%, transparent 55%);
+    }
+    .left-logo { position: relative; font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 600; color: #fff; text-decoration: none; }
+    .left-logo em { color: var(--rose); font-style: italic; }
+    .left-middle { position: relative; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+    .left-tag { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.6rem; }
+    .left-tag::before { content: ''; width: 2rem; height: 1px; background: var(--gold); }
+    .left-middle h2 { font-family: 'Cormorant Garamond', serif; font-size: 2.4rem; font-weight: 600; color: #fff; line-height: 1.2; margin-bottom: 1.25rem; }
+    .left-middle h2 em { color: var(--rose); font-style: italic; }
+    .benefit-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+    .benefit-list li { display: flex; align-items: center; gap: 0.75rem; font-size: 0.83rem; color: rgba(255,255,255,0.65); }
+    .benefit-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+    .left-note { position: relative; font-size: 0.72rem; color: rgba(255,255,255,0.3); border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1rem; }
+
+    .right-panel { background: var(--cream); overflow-y: auto; padding: 3rem; display: flex; align-items: flex-start; justify-content: center; }
+    .form-box { width: 100%; max-width: 460px; padding-top: 1rem; }
+    .form-heading { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 1.5rem; }
+    .form-title { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 600; color: var(--navy); margin-bottom: 0.4rem; }
+    .form-sub { font-size: 0.83rem; color: var(--muted); margin-bottom: 2rem; }
+    .form-sub a { color: var(--rose-deep); text-decoration: none; border-bottom: 1px solid var(--rose); }
+    .field { margin-bottom: 1.1rem; }
+    .field label { display: block; font-size: 0.78rem; color: var(--navy); margin-bottom: 0.35rem; }
+    .field input {
+      width: 100%; padding: 0.75rem 1rem;
+      border: 1px solid var(--border); border-radius: 2px;
+      font-family: 'Prompt', sans-serif; font-size: 0.88rem; font-weight: 300;
+      color: var(--navy); background: #fff; outline: none; transition: border-color 0.2s;
+    }
+    .field input:focus { border-color: var(--rose-deep); }
+    .field-hint { font-size: 0.72rem; color: var(--muted); margin-top: 0.3rem; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .btn-submit {
+      width: 100%; padding: 0.9rem;
+      background: var(--navy); color: #fff;
+      border: none; border-radius: 2px; cursor: pointer;
+      font-family: 'Prompt', sans-serif; font-size: 0.82rem;
+      font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
+      transition: background 0.2s; margin-top: 0.75rem;
+    }
+    .btn-submit:hover { background: var(--rose-deep); }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+    .alert-box {
+      border-left: 3px solid; padding: 0.75rem 1rem;
+      font-size: 0.82rem; border-radius: 0 2px 2px 0; margin-bottom: 1.25rem; display: none;
+    }
+    .alert-danger { border-color: var(--rose-deep); background: var(--rose-pale); color: var(--rose-deep); }
+    .alert-success { border-color: #2E8B57; background: #F0FFF4; color: #2E8B57; }
+    @media (max-width: 800px) {
+      body { grid-template-columns: 1fr; }
+      .left-panel { display: none; }
+      .right-panel { padding: 2rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="left-panel">
+    <div class="left-bg"></div>
+    <a href="/" class="left-logo">Sale<em>Clinic</em>.ai</a>
+    <div class="left-middle">
+      <div class="left-tag">รายได้จากการแนะนำ</div>
+      <h2>สมัครเป็น<br><em>เซลล์คลินิก</em></h2>
+      <ul class="benefit-list">
+        <li><span class="benefit-dot"></span>ระบบติดตามเคสและลูกค้าโดยเฉพาะ</li>
+        <li><span class="benefit-dot"></span>เห็นค่าคอมชัดเจนก่อนเริ่มขาย</li>
+        <li><span class="benefit-dot"></span>ไม่มีค่ารายเดือนในช่วงเปิดตัว</li>
+        <li><span class="benefit-dot"></span>เหมาะสำหรับฟรีแลนซ์และพาร์ทไทม์</li>
+        <li><span class="benefit-dot"></span>รวมคลินิกพันธมิตรกว่า 120 แห่ง</li>
+      </ul>
+    </div>
+    <div class="left-note">*หลังสมัคร ทีมงานจะตรวจสอบและอนุมัติบัญชีภายในระยะเวลาที่กำหนด</div>
+  </div>
+  <div class="right-panel">
+    <div class="form-box">
+      <div class="form-heading">สร้างบัญชีใหม่</div>
+      <div class="form-title">ยินดีต้อนรับ</div>
+      <div class="form-sub">มีบัญชีอยู่แล้ว? <a href="/login-sale">เข้าสู่ระบบที่นี่</a></div>
+      <div class="alert-box" id="alert"></div>
+      <form id="reg-form">
+        <div class="field">
+          <label>ชื่อ - นามสกุล</label>
+          <input type="text" id="name" placeholder="สมชาย ใจดี" required>
+        </div>
+        <div class="field">
+          <label>อีเมล</label>
+          <input type="email" id="email" placeholder="your@email.com" required>
+          <div class="field-hint">ใช้สำหรับเข้าสู่ระบบและรับการแจ้งเตือน</div>
+        </div>
+        <div class="field">
+          <label>เบอร์โทรศัพท์</label>
+          <input type="tel" id="phone" placeholder="08x-xxx-xxxx" required>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>รหัสผ่าน</label>
+            <input type="password" id="password" placeholder="อย่างน้อย 6 ตัว" required minlength="6">
+          </div>
+          <div class="field">
+            <label>ยืนยันรหัสผ่าน</label>
+            <input type="password" id="confirm" placeholder="กรอกซ้ำ" required minlength="6">
+          </div>
+        </div>
+        <button type="submit" class="btn-submit" id="submit-btn">สมัครเป็นเซลล์</button>
+      </form>
+    </div>
+  </div>
+<script>
+  const form = document.getElementById('reg-form');
+  const alertEl = document.getElementById('alert');
+  const btn = document.getElementById('submit-btn');
+  function showAlert(msg, type) {
+    alertEl.textContent = msg; alertEl.className = 'alert-box alert-' + type; alertEl.style.display = 'block';
+  }
+  form.addEventListener('submit', async e => {
+    e.preventDefault(); alertEl.style.display = 'none';
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const password = document.getElementById('password').value;
+    const confirm = document.getElementById('confirm').value;
+    if (!name || !email || !phone || !password) return showAlert('กรุณากรอกข้อมูลให้ครบ', 'danger');
+    if (password.length < 6) return showAlert('รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร', 'danger');
+    if (password !== confirm) return showAlert('รหัสผ่านไม่ตรงกัน', 'danger');
+    btn.disabled = true; btn.textContent = 'กำลังสมัคร...';
+    try {
+      const res = await fetch('/auth/register-sale', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({name, email, phone, password}) });
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 201) { showAlert('สมัครสำเร็จ! กรุณาเข้าสู่ระบบ', 'success'); form.reset(); }
+      else showAlert(data.error || 'สมัครไม่สำเร็จ กรุณาลองใหม่', 'danger');
+    } catch { showAlert('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์', 'danger'); }
+    finally { btn.disabled = false; btn.textContent = 'สมัครเป็นเซลล์'; }
+  });
+</script>
+</body>
+</html>

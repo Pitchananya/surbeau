@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <title>เข้าสู่ระบบ | SaleClinic.ai</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400&family=Prompt:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --rose: #F2A7B0; --rose-deep: #C96A7A; --rose-pale: #FDF0F2;
+      --navy: #1A1F3A; --gold: #C9A96E; --gold-pale: #FBF4E9;
+      --cream: #FBF8F4; --muted: #7A7D8C; --border: rgba(26,31,58,0.12);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Prompt', system-ui, sans-serif; font-weight: 300;
+      min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr;
+      background: var(--navy);
+    }
+    .left-panel {
+      position: relative; overflow: hidden;
+      background: var(--navy);
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 3rem;
+    }
+    .left-bg {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 30% 20%, rgba(201,169,110,0.2) 0%, transparent 60%),
+                  radial-gradient(ellipse at 80% 80%, rgba(242,167,176,0.15) 0%, transparent 60%);
+    }
+    .left-logo {
+      position: absolute; top: 2.5rem; left: 3rem;
+      font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 600;
+      color: #fff; text-decoration: none; z-index: 1;
+    }
+    .left-logo em { color: var(--rose); font-style: italic; }
+    .left-content { position: relative; z-index: 1; }
+    .left-tag {
+      font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 1rem;
+      display: flex; align-items: center; gap: 0.6rem;
+    }
+    .left-tag::before { content: ''; width: 2rem; height: 1px; background: var(--gold); }
+    .left-content h2 {
+      font-family: 'Cormorant Garamond', serif; font-size: 2.5rem;
+      font-weight: 600; color: #fff; line-height: 1.2; margin-bottom: 1rem;
+    }
+    .left-content h2 em { color: var(--rose); font-style: italic; }
+    .left-content p { font-size: 0.85rem; color: rgba(255,255,255,0.5); line-height: 1.7; margin-bottom: 2rem; }
+    .left-stats { display: flex; gap: 2rem; }
+    .stat { }
+    .stat-num {
+      font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 600;
+      color: var(--gold); line-height: 1;
+    }
+    .stat-lbl { font-size: 0.72rem; color: rgba(255,255,255,0.4); margin-top: 2px; }
+
+    .right-panel {
+      background: var(--cream); display: flex; align-items: center; justify-content: center;
+      padding: 3rem;
+    }
+    .form-box { width: 100%; max-width: 380px; }
+    .form-heading { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 2rem; }
+    .form-title {
+      font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 600;
+      color: var(--navy); margin-bottom: 0.5rem; line-height: 1.1;
+    }
+    .form-sub { font-size: 0.85rem; color: var(--muted); margin-bottom: 2rem; }
+    .form-sub a { color: var(--rose-deep); text-decoration: none; border-bottom: 1px solid var(--rose); }
+    .field { margin-bottom: 1.25rem; }
+    .field label { display: block; font-size: 0.78rem; color: var(--navy); margin-bottom: 0.4rem; letter-spacing: 0.02em; }
+    .field input {
+      width: 100%; padding: 0.8rem 1rem;
+      border: 1px solid var(--border); border-radius: 2px;
+      font-family: 'Prompt', sans-serif; font-size: 0.88rem; font-weight: 300;
+      color: var(--navy); background: #fff; outline: none;
+      transition: border-color 0.2s;
+    }
+    .field input:focus { border-color: var(--rose-deep); }
+    .btn-submit {
+      width: 100%; padding: 0.85rem;
+      background: var(--navy); color: #fff;
+      border: none; border-radius: 2px; cursor: pointer;
+      font-family: 'Prompt', sans-serif; font-size: 0.82rem;
+      font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
+      transition: background 0.2s; margin-top: 0.5rem;
+    }
+    .btn-submit:hover { background: var(--rose-deep); }
+    .alert-box {
+      border-left: 3px solid var(--rose-deep); background: var(--rose-pale);
+      padding: 0.75rem 1rem; font-size: 0.82rem; color: var(--rose-deep);
+      border-radius: 0 2px 2px 0; margin-bottom: 1.25rem; display: none;
+    }
+    @media (max-width: 700px) {
+      body { grid-template-columns: 1fr; }
+      .left-panel { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="left-panel">
+    <div class="left-bg"></div>
+    <a href="/" class="left-logo">Sale<em>Clinic</em>.ai</a>
+    <div class="left-content">
+      <div class="left-tag">สำหรับเซลล์แนะนำคลินิก</div>
+      <h2>ยินดีต้อนรับ<br><em>กลับมา</em></h2>
+      <p>เข้าสู่ระบบเพื่อดูแดชบอร์ด ติดตามเคส และรับค่าคอมของคุณ</p>
+      <div class="left-stats">
+        <div class="stat"><div class="stat-num">120+</div><div class="stat-lbl">คลินิกพันธมิตร</div></div>
+        <div class="stat"><div class="stat-num">฿0</div><div class="stat-lbl">ค่าบริการรายเดือน</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="right-panel">
+    <div class="form-box">
+      <div class="form-heading">Sale Portal</div>
+      <div class="form-title">เข้าสู่ระบบ</div>
+      <div class="form-sub">ยังไม่มีบัญชี? <a href="/register-sale">สมัครเป็นเซลล์ที่นี่</a></div>
+      <div class="alert-box" id="alert"></div>
+      <form id="login-form">
+        <div class="field">
+          <label>อีเมล</label>
+          <input type="email" id="email" placeholder="your@email.com" required>
+        </div>
+        <div class="field">
+          <label>รหัสผ่าน</label>
+          <input type="password" id="password" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn-submit">เข้าสู่ระบบ</button>
+      </form>
+    </div>
+  </div>
+<script>
+  const form = document.getElementById('login-form');
+  const alertEl = document.getElementById('alert');
+  form.addEventListener('submit', async e => {
+    e.preventDefault(); alertEl.style.display = 'none';
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    if (!email || !password) { alertEl.textContent = 'กรุณากรอกข้อมูลให้ครบ'; alertEl.style.display = 'block'; return; }
+    try {
+      const res = await fetch('/auth/login', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({email, password}), credentials: 'include' });
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 200) { window.location.href = '/sale/dashboard'; }
+      else { alertEl.textContent = data.error || 'เข้าสู่ระบบไม่สำเร็จ'; alertEl.style.display = 'block'; }
+    } catch { alertEl.textContent = 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์'; alertEl.style.display = 'block'; }
+  });
+</script>
+</body>
+</html>

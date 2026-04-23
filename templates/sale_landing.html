@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <title>สำหรับเซลล์คลินิก | SaleClinic.ai</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --rose: #F2A7B0; --rose-deep: #C96A7A; --rose-pale: #FDF0F2;
+      --navy: #1A1F3A; --navy-mid: #2E3558;
+      --gold: #C9A96E; --gold-pale: #FBF4E9;
+      --cream: #FBF8F4; --text: #1A1F3A; --muted: #7A7D8C;
+      --border: rgba(26,31,58,0.1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Prompt', sans-serif; font-weight: 300; background: var(--cream); color: var(--text); line-height: 1.7; overflow-x: hidden; }
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(251,248,244,0.92); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); padding: 0 1.5rem; }
+    .nav-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 2rem; }
+    .nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 600; color: var(--navy); text-decoration: none; }
+    .nav-logo em { color: var(--rose-deep); font-style: italic; }
+    .nav-links { display: flex; align-items: center; gap: 2rem; }
+    .nav-links a { font-size: 0.82rem; font-weight: 400; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--navy); }
+    .nav-actions { display: flex; align-items: center; gap: 0.75rem; }
+    .btn-ghost { font-family: 'Prompt', sans-serif; font-size: 0.82rem; font-weight: 400; letter-spacing: 0.04em; text-transform: uppercase; color: var(--navy); background: none; border: 1px solid var(--border); border-radius: 2px; padding: 0.45rem 1.2rem; cursor: pointer; text-decoration: none; transition: all 0.2s; }
+    .btn-ghost:hover { border-color: var(--navy); background: var(--navy); color: #fff; }
+    .btn-primary { font-family: 'Prompt', sans-serif; font-size: 0.82rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: #fff; background: var(--rose-deep); border: 1px solid var(--rose-deep); border-radius: 2px; padding: 0.45rem 1.4rem; cursor: pointer; text-decoration: none; transition: all 0.2s; }
+    .btn-primary:hover { background: var(--navy); border-color: var(--navy); }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+    .section-label { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* HERO */
+    .hero { padding: 5rem 0 4rem; }
+    .hero-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+    .hero-label { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--rose-deep); display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.25rem; }
+    .hero-label::before { content: ''; width: 2rem; height: 1px; background: var(--rose-deep); }
+    .hero h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.5rem, 4vw, 3.5rem); font-weight: 600; line-height: 1.15; color: var(--navy); margin-bottom: 1.25rem; }
+    .hero h1 em { color: var(--rose-deep); font-style: italic; }
+    .hero-sub { font-size: 0.93rem; color: var(--muted); line-height: 1.75; margin-bottom: 1.75rem; max-width: 42ch; }
+    .pill-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem; }
+    .pill { font-size: 0.75rem; padding: 0.3rem 0.85rem; background: #fff; border: 1px solid var(--border); border-radius: 1px; color: var(--navy); }
+    .hero-cta { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+    .btn-hero { font-family: 'Prompt', sans-serif; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: #fff; background: var(--navy); border: 1px solid var(--navy); border-radius: 2px; padding: 0.75rem 2rem; cursor: pointer; text-decoration: none; transition: all 0.2s; }
+    .btn-hero:hover { background: var(--rose-deep); border-color: var(--rose-deep); }
+    .btn-hero-outline { font-family: 'Prompt', sans-serif; font-size: 0.85rem; font-weight: 400; letter-spacing: 0.04em; text-transform: uppercase; color: var(--navy); background: none; border: 1px solid var(--border); border-radius: 2px; padding: 0.75rem 1.75rem; cursor: pointer; text-decoration: none; transition: all 0.2s; }
+    .btn-hero-outline:hover { border-color: var(--navy); }
+    .hero-note { font-size: 0.75rem; color: var(--muted); margin-top: 1rem; }
+    .income-card { background: #fff; border: 1px solid var(--border); border-radius: 4px; padding: 1.75rem; }
+    .income-card h5 { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; font-weight: 600; color: var(--navy); margin-bottom: 1.25rem; }
+    .income-row { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+    .income-row:last-of-type { border: none; font-weight: 500; }
+    .income-amount { color: var(--rose-deep); font-weight: 500; }
+    .income-total { color: var(--rose-deep); font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 600; }
+    .income-note { font-size: 0.72rem; color: var(--muted); margin-top: 1rem; }
+
+    /* HOW */
+    .how-section { padding: 5rem 0; background: #fff; }
+    .how-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; background: var(--border); margin-top: 2rem; }
+    .step-card { background: #fff; padding: 2rem 1.75rem; }
+    .step-num { font-family: 'Cormorant Garamond', serif; font-size: 3.5rem; font-weight: 600; color: var(--rose-pale); -webkit-text-stroke: 1px var(--rose); line-height: 1; margin-bottom: 1rem; }
+    .step-title { font-weight: 500; font-size: 1rem; color: var(--navy); margin-bottom: 0.75rem; }
+    .step-desc { font-size: 0.83rem; color: var(--muted); line-height: 1.65; }
+
+    /* CAMPAIGNS */
+    .campaigns-section { padding: 4rem 0; }
+    .camp-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; }
+    .camp-card { background: #fff; border: 1px solid var(--border); border-radius: 2px; padding: 1.5rem; transition: all 0.2s; }
+    .camp-card:hover { box-shadow: 0 8px 30px rgba(26,31,58,0.08); transform: translateY(-2px); }
+    .camp-clinic { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.4rem; }
+    .camp-title { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 600; color: var(--navy); margin-bottom: 0.5rem; line-height: 1.3; }
+    .camp-desc { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.75rem; }
+    .camp-orig { font-size: 0.78rem; color: var(--muted); text-decoration: line-through; }
+    .camp-price { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 600; color: var(--rose-deep); }
+    .camp-btn { display: block; text-align: center; margin-top: 1rem; padding: 0.55rem; border: 1px solid var(--border); border-radius: 2px; font-size: 0.75rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--navy); text-decoration: none; transition: all 0.2s; }
+    .camp-btn:hover { border-color: var(--rose-deep); color: var(--rose-deep); }
+
+    /* CTA BOTTOM */
+    .cta-section { padding: 5rem 0; background: var(--navy); }
+    .cta-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+    .cta-left h2 { font-family: 'Cormorant Garamond', serif; font-size: 2.5rem; font-weight: 600; color: #fff; line-height: 1.2; margin-bottom: 1rem; }
+    .cta-left h2 em { color: var(--gold); font-style: italic; }
+    .cta-left p { font-size: 0.88rem; color: rgba(255,255,255,0.5); margin-bottom: 1.75rem; }
+    .cta-btn { font-family: 'Prompt', sans-serif; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; color: var(--navy); background: var(--gold); border: none; border-radius: 2px; padding: 0.9rem 2.25rem; cursor: pointer; text-decoration: none; transition: all 0.2s; display: inline-block; }
+    .cta-btn:hover { background: #fff; }
+    .cta-right { }
+    .benefit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: rgba(255,255,255,0.08); }
+    .benefit-item { background: rgba(255,255,255,0.04); padding: 1.5rem; }
+    .benefit-icon { font-size: 1.3rem; margin-bottom: 0.5rem; }
+    .benefit-title { font-size: 0.85rem; font-weight: 500; color: #fff; margin-bottom: 0.35rem; }
+    .benefit-desc { font-size: 0.75rem; color: rgba(255,255,255,0.4); }
+
+    footer { padding: 2rem 1.5rem; border-top: 1px solid var(--border); background: var(--cream); }
+    .footer-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+    .footer-inner p { font-size: 0.78rem; color: var(--muted); }
+
+    @media (max-width: 900px) {
+      .hero-inner, .cta-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+      .how-grid, .camp-grid { grid-template-columns: 1fr; }
+      .benefit-grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="/">Sale<em>Clinic</em>.ai</a>
+    <div class="nav-links">
+      <a href="/">หน้าแรก</a>
+      <a href="/for-sale" class="active">สำหรับเซลล์</a>
+      <a href="/clinic/add-campaign">สำหรับคลินิก</a>
+    </div>
+    <div class="nav-actions">
+      <a href="/login-sale" class="btn-ghost">เข้าสู่ระบบ</a>
+      <a href="/register-sale" class="btn-primary">สมัครเป็นเซลล์</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <section class="hero">
+    <div class="container">
+      <div class="hero-inner">
+        <div>
+          <div class="hero-label">ค่าคอมจริงจากเคสจริง</div>
+          <h1>เป็นเซลล์แนะนำคลินิก<br><em>ปิดเคสได้ค่าคอมทุกเคส</em></h1>
+          <p class="hero-sub">รวมโปรคลินิกเสริมความงามจากหลายที่ไว้ในที่เดียว เลือกโปรที่ใช่ แชร์ลิงก์ให้ลูกค้า รอรับค่าคอมเมื่อปิดเคสสำเร็จ</p>
+          <div class="pill-row">
+            <span class="pill">แดชบอร์ดสรุปรายได้รายวัน</span>
+            <span class="pill">ติดตามสถานะลูกค้าแต่ละคน</span>
+            <span class="pill">เหมาะทั้งฟรีแลนซ์และพาร์ทไทม์</span>
+          </div>
+          <div class="hero-cta">
+            <a href="/register-sale" class="btn-hero">สมัครเป็นเซลล์ตอนนี้</a>
+            <a href="#how-it-works" class="btn-hero-outline">ดูวิธีทำงาน</a>
+          </div>
+          <p class="hero-note">ตัวอย่าง: โปรโบท็อกซ์ 4,990 บาท ค่าคอมเซลล์ 500–800 บาทต่อเคส*</p>
+        </div>
+        <div>
+          <div class="income-card">
+            <h5>ตัวอย่างรายได้ต่อเดือน*</h5>
+            <div class="income-row"><span>ปิดเคสโบท็อกซ์ 15 เคส</span><span class="income-amount">~7,500 บาท</span></div>
+            <div class="income-row"><span>ปิดเคสฟิลเลอร์ 10 เคส</span><span class="income-amount">~10,000 บาท</span></div>
+            <div class="income-row"><span>ปิดรวม 25 เคส / เดือน</span><span class="income-total">~17,500 บาท</span></div>
+            <p class="income-note">*ประมาณการเท่านั้น รายได้จริงขึ้นกับดีลของแต่ละคลินิก</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="how-section" id="how-it-works">
+    <div class="container">
+      <div class="section-label">วิธีทำงาน</div>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;color:var(--navy);">ระบบทำงาน<em style="color:var(--rose-deep);font-style:italic;">ยังไง?</em></h2>
+      <div class="how-grid">
+        <div class="step-card">
+          <div class="step-num">01</div>
+          <div class="step-title">สมัคร &amp; ยืนยันตัวตน</div>
+          <div class="step-desc">สมัครเป็นเซลล์ กรอกข้อมูลติดต่อและบัญชีรับเงิน รอคลินิก/แอดมินอนุมัติ</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">02</div>
+          <div class="step-title">เลือกโปร &amp; รับลิงก์ส่วนตัว</div>
+          <div class="step-desc">เลือกแคมเปญจากคลินิกที่อยากขาย ระบบจะสร้างลิงก์ส่วนตัวให้คุณแชร์ให้ลูกค้า</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">03</div>
+          <div class="step-title">ปิดเคส &amp; รับค่าคอม</div>
+          <div class="step-desc">เมื่อลูกค้าเข้าคลินิกและเคสสำเร็จ ระบบจะคำนวณค่าคอมให้คุณอัตโนมัติ</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="campaigns-section">
+    <div class="container">
+      <div class="section-label">โปรที่คุณขายได้</div>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;color:var(--navy);margin-bottom:1.75rem;">ตัวอย่าง<em style="color:var(--rose-deep);font-style:italic;">แคมเปญ</em>ในระบบ</h2>
+      <div class="camp-grid" id="campaign-list">
+        <div class="camp-card"><div class="camp-clinic">Glow Up Clinic</div><div class="camp-title">โบท็อกซ์หน้าผาก + หางตา</div><div class="camp-desc">เหมาะสำหรับคนอยากลดริ้วรอย</div><div class="camp-orig">ปกติ 9,990 บาท</div><div class="camp-price">4,990 บาท</div><a href="#" class="camp-btn">ดูรายละเอียด</a></div>
+        <div class="camp-card"><div class="camp-clinic">Clear Skin</div><div class="camp-title">เลเซอร์รักษาหลุมสิว 3 ครั้ง</div><div class="camp-desc">เหมาะสำหรับคนมีรอยสิวเรื้อรัง</div><div class="camp-orig">ปกติ 15,000 บาท</div><div class="camp-price">9,900 บาท</div><a href="#" class="camp-btn">ดูรายละเอียด</a></div>
+        <div class="camp-card"><div class="camp-clinic">Shape Fit</div><div class="camp-title">แพ็กเกจสลายไขมันเหนียง</div><div class="camp-desc">แถมปรึกษาแพทย์ฟรี 1 ครั้ง</div><div class="camp-orig">ปกติ 12,000 บาท</div><div class="camp-price">6,900 บาท</div><a href="#" class="camp-btn">ดูรายละเอียด</a></div>
+      </div>
+      <div id="campaign-empty" style="display:none;font-size:0.85rem;color:var(--muted);margin-top:1rem;">ยังไม่มีแคมเปญในระบบ</div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-inner">
+        <div class="cta-left">
+          <h2>เริ่มต้น<br>วันนี้<em>เลย</em></h2>
+          <p>สมัครง่าย ใช้แค่เบอร์โทรและอีเมล ไม่มีค่าใช้จ่ายรายเดือนในช่วงเปิดตัว</p>
+          <a href="/register-sale" class="cta-btn">สมัครเป็นเซลล์ฟรี</a>
+        </div>
+        <div class="cta-right">
+          <div class="benefit-grid">
+            <div class="benefit-item"><div class="benefit-icon">💰</div><div class="benefit-title">ค่าคอมชัดเจน</div><div class="benefit-desc">รู้ก่อนเริ่มขาย ไม่มีเงื่อนไขซ่อนเร้น</div></div>
+            <div class="benefit-item"><div class="benefit-icon">📊</div><div class="benefit-title">แดชบอร์ดส่วนตัว</div><div class="benefit-desc">ติดตามเคสและรายได้แบบเรียลไทม์</div></div>
+            <div class="benefit-item"><div class="benefit-icon">🔗</div><div class="benefit-title">ลิงก์ส่วนตัว</div><div class="benefit-desc">แชร์ให้ลูกค้าได้ทุกช่องทาง</div></div>
+            <div class="benefit-item"><div class="benefit-icon">⚡</div><div class="benefit-title">เริ่มได้ทันที</div><div class="benefit-desc">หลังอนุมัติสามารถขายได้เลย</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <p>© 2026 SaleClinic.ai — Surgery &amp; Beauty Platform</p>
+  </div>
+</footer>
+
+<script>
+async function loadCampaigns() {
+  const listEl = document.getElementById('campaign-list');
+  const emptyEl = document.getElementById('campaign-empty');
+  try {
+    const res = await fetch('/campaigns');
+    const data = await res.json();
+    if (!Array.isArray(data) || data.length === 0) { emptyEl.style.display = 'block'; return; }
+    listEl.innerHTML = '';
+    data.forEach(c => {
+      const d = document.createElement('div');
+      d.className = 'camp-card';
+      d.innerHTML = `<div class="camp-clinic">คลินิกพันธมิตร</div><div class="camp-title">${c.title}</div><div class="camp-desc">${c.description||''}</div><div class="camp-orig">ปกติ ${(c.normal_price||0).toLocaleString()} บาท</div><div class="camp-price">${(c.promo_price||0).toLocaleString()} บาท</div><a href="#" class="camp-btn">ดูรายละเอียด</a>`;
+      listEl.appendChild(d);
+    });
+  } catch { emptyEl.style.display = 'block'; }
+}
+document.addEventListener('DOMContentLoaded', loadCampaigns);
+</script>
+</body>
+</html>
