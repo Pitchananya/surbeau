@@ -1,10 +1,14 @@
+import Link from "next/link";
 import { Star } from "lucide-react";
 import type { ClinicBadge, ClinicCardData } from "@/lib/types";
 import { cn, formatBaht, formatDistanceKm } from "@/lib/utils";
 
 export function ClinicCard({ clinic }: { clinic: ClinicCardData }) {
   return (
-    <article className="overflow-hidden rounded-[var(--radius-card)] border border-[color:var(--color-border-default)] bg-[color:var(--color-surface)] transition-colors hover:border-[color:var(--color-gold-muted)]">
+    <Link
+      href={`/clinics/${clinic.id}`}
+      className="group block overflow-hidden rounded-[var(--radius-card)] border border-[color:var(--color-border-default)] bg-[color:var(--color-surface)] transition-all hover:-translate-y-0.5 hover:border-[color:var(--color-gold-muted)] hover:shadow-[0_12px_40px_-12px_rgba(212,168,90,0.25)]"
+    >
       <div
         className="relative h-44 w-full"
         style={{ background: clinic.imageGradient }}
@@ -39,7 +43,7 @@ export function ClinicCard({ clinic }: { clinic: ClinicCardData }) {
           </div>
         )}
       </div>
-    </article>
+    </Link>
   );
 }
 

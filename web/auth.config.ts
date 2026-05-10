@@ -21,19 +21,23 @@ export const authConfig = {
   ],
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
+      const path = nextUrl.pathname;
       const isLoggedIn = !!auth?.user;
-      const isAuthRoute = nextUrl.pathname.startsWith("/auth/");
+      const isAuthRoute = path.startsWith("/auth/");
+
+      // Protect dashboard routes only. /clinics/[id] (public detail, with 's')
+      // is intentionally NOT matched here — it's a public discovery page.
       const isProtected =
-        nextUrl.pathname.startsWith("/sale") ||
-        nextUrl.pathname.startsWith("/clinic") ||
-        nextUrl.pathname.startsWith("/admin");
+        path === "/sale" || path.startsWith("/sale/") ||
+        path === "/clinic" || path.startsWith("/clinic/") ||
+        path === "/admin" || path.startsWith("/admin/");
 
       if (isProtected && !isLoggedIn) {
         const loginUrl = new URL("/auth/login", nextUrl);
-        loginUrl.searchParams.set("next", nextUrl.pathname);
+        loginUrl.searchParams.set("next", path);
         return Response.redirect(loginUrl);
       }
-      if (isAuthRoute && isLoggedIn && nextUrl.pathname === "/auth/login") {
+      if (isAuthRoute && isLoggedIn && path === "/auth/login") {
         return Response.redirect(new URL("/", nextUrl));
       }
       return true;
