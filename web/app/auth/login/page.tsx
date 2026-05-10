@@ -1,0 +1,76 @@
+import { CrownGlyph } from "@/components/brand/logo";
+import { signIn } from "@/auth";
+
+type SearchParams = Promise<{ next?: string; error?: string }>;
+
+export default async function LoginPage(props: { searchParams: SearchParams }) {
+  const { next, error } = await props.searchParams;
+
+  return (
+    <main className="flex min-h-dvh flex-col items-center justify-center px-8">
+      <div className="mb-8 flex flex-col items-center gap-3">
+        <CrownGlyph className="h-16 w-20 text-[color:var(--color-gold)]" />
+        <h1 className="font-brand text-4xl font-semibold text-gold-gradient">
+          Sur Beau
+        </h1>
+        <p className="text-sm tracking-[0.2em] text-[color:var(--color-muted)]">
+          CLINIC PLATFORM
+        </p>
+      </div>
+
+      <div className="w-full max-w-xs space-y-3">
+        <form
+          action={async () => {
+            "use server";
+            await signIn("line", { redirectTo: next ?? "/" });
+          }}
+        >
+          <button
+            type="submit"
+            className="flex w-full items-center justify-center gap-2.5 rounded-full bg-[#06C755] px-5 py-3.5 text-[0.95rem] font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+          >
+            <LineIcon className="h-5 w-5" />
+            เข้าสู่ระบบด้วย LINE
+          </button>
+        </form>
+
+        {error && (
+          <p className="text-center text-[0.82rem] text-[color:var(--color-hot)]">
+            {errorMessage(error)}
+          </p>
+        )}
+
+        <p className="pt-4 text-center text-[0.78rem] text-[color:var(--color-muted)]">
+          การเข้าใช้งานถือว่าคุณยอมรับ{" "}
+          <a href="/terms" className="text-[color:var(--color-gold-bright)] hover:underline">
+            ข้อตกลง
+          </a>{" "}
+          และ{" "}
+          <a href="/privacy" className="text-[color:var(--color-gold-bright)] hover:underline">
+            นโยบายความเป็นส่วนตัว
+          </a>
+        </p>
+      </div>
+    </main>
+  );
+}
+
+function errorMessage(code: string): string {
+  switch (code) {
+    case "OAuthSignin":
+    case "OAuthCallbackError":
+      return "เข้าสู่ระบบ LINE ไม่สำเร็จ — กรุณาลองอีกครั้ง";
+    case "AccessDenied":
+      return "ไม่ได้รับสิทธิ์ใช้งาน";
+    default:
+      return "เกิดข้อผิดพลาด — กรุณาลองอีกครั้ง";
+  }
+}
+
+function LineIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden>
+      <path d="M19.365 9.863c.349 0 .63.285.631.631 0 .345-.281.63-.631.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.282.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.345 0 .627.285.627.63 0 .349-.282.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" />
+    </svg>
+  );
+}

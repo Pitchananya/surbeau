@@ -1,0 +1,221 @@
+import { sql, relations } from "drizzle-orm";
+import {
+  boolean,
+  date,
+  integer,
+  numeric,
+  pgEnum,
+  pgTable,
+  smallint,
+  text,
+  timestamp,
+  uniqueIndex,
+  uuid,
+} from "drizzle-orm/pg-core";
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Enums
+// ═══════════════════════════════════════════════════════════════════════════
+export const userRole = pgEnum("user_role", ["admin", "sale", "clinic", "customer"]);
+export const userStatus = pgEnum("user_status", ["active", "pending", "blocked"]);
+export const saleStatus = pgEnum("sale_status", ["pending", "approved", "rejected", "blocked"]);
+export const clinicStatus = pgEnum("clinic_status", ["pending", "approved", "rejected", "blocked"]);
+export const subscriptionTier = pgEnum("subscription_tier", ["free", "verified", "premier"]);
+export const leadStatus = pgEnum("lead_status", ["new", "contacted", "success", "failed"]);
+export const commissionStatus = pgEnum("commission_status", [
+  "pending", "approved", "awaiting_payout", "paid", "cancelled",
+]);
+export const payoutStatus = pgEnum("payout_status", ["pending", "approved", "rejected"]);
+
+// ═══════════════════════════════════════════════════════════════════════════
+// users — single source of truth (no Auth.js adapter; we manage upsert in
+// signIn callback). FK target for everything else.
+// ═══════════════════════════════════════════════════════════════════════════
+export const users = pgTable("users", {
+  id:          uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  email:       text("email").unique(),
+  name:        text("name").notNull(),
+  phone:       text("phone"),
+  image:       text("image"),
+  role:        userRole("role").notNull().default("customer"),
+  status:      userStatus("status").notNull().default("active"),
+  lineUserId:  text("line_user_id").unique(),
+  createdAt:   timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt:   timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// sale_profiles
+// ═══════════════════════════════════════════════════════════════════════════
+export const saleProfiles = pgTable("sale_profiles", {
+  id:               uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId:           uuid("user_id").notNull().unique().references(() => users.id, { onDelete: "cascade" }),
+  bio:              text("bio"),
+  bankAccountName:  text("bank_account_name"),
+  bankAccountNo:    text("bank_account_no"),
+  bankName:         text("bank_name"),
+  promptpay:        text("promptpay"),
+  status:           saleStatus("status").notNull().default("pending"),
+  createdAt:        timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt:        timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// clinic_profiles
+// ═══════════════════════════════════════════════════════════════════════════
+export const clinicProfiles = pgTable("clinic_profiles", {
+  id:                uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId:            uuid("user_id").notNull().unique().references(() => users.id, { onDelete: "cascade" }),
+  clinicName:        text("clinic_name").notNull(),
+  licenseNo:         text("license_no"),
+  address:           text("address"),
+  province:          text("province"),
+  district:          text("district"),
+  latitude:          numeric("latitude", { precision: 10, scale: 7 }),
+  longitude:         numeric("longitude", { precision: 10, scale: 7 }),
+  phone:             text("phone"),
+  lineOfficial:      text("line_official"),
+  facebookUrl:       text("facebook_url"),
+  instagramUrl:      text("instagram_url"),
+  subscriptionTier:  subscriptionTier("subscription_tier").notNull().default("free"),
+  ratingAvg:         numeric("rating_avg", { precision: 3, scale: 2 }).notNull().default("0"),
+  ratingCount:       integer("rating_count").notNull().default(0),
+  status:            clinicStatus("status").notNull().default("pending"),
+  createdAt:         timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt:         timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// campaigns
+// ═══════════════════════════════════════════════════════════════════════════
+export const campaigns = pgTable("campaigns", {
+  id:                    uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  clinicId:              uuid("clinic_id").notNull().references(() => clinicProfiles.id, { onDelete: "cascade" }),
+  title:                 text("title").notNull(),
+  description:           text("description"),
+  normalPrice:           numeric("normal_price", { precision: 12, scale: 2 }),
+  promoPrice:            numeric("promo_price", { precision: 12, scale: 2 }),
+  commissionPerSuccess:  numeric("commission_per_success", { precision: 12, scale: 2 }).notNull(),
+  maxSlots:              integer("max_slots"),
+  startDate:             date("start_date"),
+  endDate:               date("end_date"),
+  isActive:              boolean("is_active").notNull().default(true),
+  isFeatured:            boolean("is_featured").notNull().default(false),
+  createdAt:             timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt:             timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// leads
+// ═══════════════════════════════════════════════════════════════════════════
+export const leads = pgTable("leads", {
+  id:               uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  campaignId:       uuid("campaign_id").notNull().references(() => campaigns.id, { onDelete: "cascade" }),
+  saleId:           uuid("sale_id").notNull().references(() => saleProfiles.id, { onDelete: "restrict" }),
+  customerName:     text("customer_name").notNull(),
+  customerPhone:    text("customer_phone").notNull(),
+  note:             text("note"),
+  status:           leadStatus("status").notNull().default("new"),
+  statusUpdatedAt:  timestamp("status_updated_at", { withTimezone: true }),
+  statusUpdatedBy:  uuid("status_updated_by").references(() => users.id),
+  createdAt:        timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// commissions (1-1 with lead via unique lead_id)
+// ═══════════════════════════════════════════════════════════════════════════
+export const commissions = pgTable("commissions", {
+  id:           uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  saleId:       uuid("sale_id").notNull().references(() => saleProfiles.id, { onDelete: "restrict" }),
+  leadId:       uuid("lead_id").notNull().unique().references(() => leads.id, { onDelete: "cascade" }),
+  amount:       numeric("amount", { precision: 12, scale: 2 }).notNull(),
+  status:       commissionStatus("status").notNull().default("pending"),
+  approvedAt:   timestamp("approved_at", { withTimezone: true }),
+  approvedBy:   uuid("approved_by").references(() => users.id),
+  paidAt:       timestamp("paid_at", { withTimezone: true }),
+  paidBy:       uuid("paid_by").references(() => users.id),
+  createdAt:    timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// payout_requests
+// ═══════════════════════════════════════════════════════════════════════════
+export const payoutRequests = pgTable("payout_requests", {
+  id:                uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  saleId:            uuid("sale_id").notNull().references(() => saleProfiles.id, { onDelete: "restrict" }),
+  amount:            numeric("amount", { precision: 12, scale: 2 }).notNull(),
+  bankAccountName:   text("bank_account_name"),
+  bankAccountNo:     text("bank_account_no"),
+  bankName:          text("bank_name"),
+  promptpay:         text("promptpay"),
+  note:              text("note"),
+  status:            payoutStatus("status").notNull().default("pending"),
+  processedAt:       timestamp("processed_at", { withTimezone: true }),
+  processedBy:       uuid("processed_by").references(() => users.id),
+  createdAt:         timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  // only ONE pending payout per sale at a time — partial unique index
+  uniqueIndex("payout_one_pending_per_sale")
+    .on(t.saleId)
+    .where(sql`${t.status} = 'pending'`),
+]);
+
+// ═══════════════════════════════════════════════════════════════════════════
+// clinic_reviews
+// ═══════════════════════════════════════════════════════════════════════════
+export const clinicReviews = pgTable("clinic_reviews", {
+  id:            uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  clinicId:      uuid("clinic_id").notNull().references(() => clinicProfiles.id, { onDelete: "cascade" }),
+  leadId:        uuid("lead_id").unique().references(() => leads.id, { onDelete: "set null" }),
+  reviewerName:  text("reviewer_name").notNull(),
+  rating:        smallint("rating").notNull(),
+  comment:       text("comment"),
+  isVerified:    boolean("is_verified").notNull().default(false),
+  isVisible:     boolean("is_visible").notNull().default(true),
+  createdAt:     timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Relations
+// ═══════════════════════════════════════════════════════════════════════════
+export const usersRelations = relations(users, ({ one }) => ({
+  saleProfile:   one(saleProfiles,   { fields: [users.id], references: [saleProfiles.userId] }),
+  clinicProfile: one(clinicProfiles, { fields: [users.id], references: [clinicProfiles.userId] }),
+}));
+
+export const clinicProfilesRelations = relations(clinicProfiles, ({ one, many }) => ({
+  user:      one(users, { fields: [clinicProfiles.userId], references: [users.id] }),
+  campaigns: many(campaigns),
+  reviews:   many(clinicReviews),
+}));
+
+export const saleProfilesRelations = relations(saleProfiles, ({ one, many }) => ({
+  user:        one(users, { fields: [saleProfiles.userId], references: [users.id] }),
+  leads:       many(leads),
+  commissions: many(commissions),
+}));
+
+export const campaignsRelations = relations(campaigns, ({ one, many }) => ({
+  clinic: one(clinicProfiles, { fields: [campaigns.clinicId], references: [clinicProfiles.id] }),
+  leads:  many(leads),
+}));
+
+export const leadsRelations = relations(leads, ({ one }) => ({
+  campaign:   one(campaigns,     { fields: [leads.campaignId], references: [campaigns.id] }),
+  sale:       one(saleProfiles,  { fields: [leads.saleId],     references: [saleProfiles.id] }),
+  commission: one(commissions),
+}));
+
+export const commissionsRelations = relations(commissions, ({ one }) => ({
+  sale: one(saleProfiles, { fields: [commissions.saleId], references: [saleProfiles.id] }),
+  lead: one(leads,        { fields: [commissions.leadId], references: [leads.id] }),
+}));
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Type helpers
+// ═══════════════════════════════════════════════════════════════════════════
+export type User = typeof users.$inferSelect;
+export type NewUser = typeof users.$inferInsert;
+export type ClinicProfile = typeof clinicProfiles.$inferSelect;
+export type Campaign = typeof campaigns.$inferSelect;
+export type Lead = typeof leads.$inferSelect;
