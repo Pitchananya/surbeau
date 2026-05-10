@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: surbeau_db
+    restart: always
+    environment:
+      POSTGRES_USER: user_surbeau
+      POSTGRES_PASSWORD: password_123
+      POSTGRES_DB: surbeau_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    container_name: surbeau_app
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - DATABASE_URL=postgresql://user_surbeau:password_123@db:5432/surbeau_db
+      - SECRET_KEY=your_secret_key_here
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
