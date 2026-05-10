@@ -15,7 +15,7 @@ export function BottomNav() {
   const [active, setActive] = useState<(typeof TABS)[number]["id"]>("search");
 
   return (
-    <nav className="sticky bottom-0 mt-6 border-t border-[color:var(--color-border-soft)] bg-[color:var(--color-background)]/95 px-2 py-2 backdrop-blur-md">
+    <nav className="sticky bottom-0 mt-6 border-t border-[color:var(--color-border-soft)] bg-[color:var(--color-background)]/95 px-2 py-2 backdrop-blur-md lg:hidden">
       <ul className="flex items-center justify-around">
         {TABS.map((t) => {
           const isActive = active === t.id;

@@ -37,9 +37,7 @@ export default function RootLayout({
   return (
     <html lang="th" className={`${sarabun.variable} ${playfair.variable}`}>
       <body className="font-sans antialiased">
-        <div className="mx-auto min-h-dvh max-w-md">
-          {children}
-        </div>
+        {children}
       </body>
     </html>
   );

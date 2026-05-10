@@ -17,27 +17,38 @@ export function TierFilter() {
   const [active, setActive] = useState<Filter>("verified");
 
   return (
-    <div className="px-5 pt-4">
-      <div className="no-scrollbar -mx-5 flex gap-2 overflow-x-auto px-5 pb-1">
-        {FILTERS.map((f) => {
-          const isActive = active === f.value;
-          const styles = getChipStyles(f.value, isActive);
-          return (
-            <button
-              key={f.value}
-              type="button"
-              onClick={() => setActive(f.value)}
-              className={cn(
-                "shrink-0 rounded-full border px-4 py-1.5 text-[0.82rem] font-medium transition-all",
-                styles,
-              )}
-            >
-              {f.label}
-            </button>
-          );
-        })}
+    <div className="px-5 pt-4 lg:mx-auto lg:max-w-7xl lg:px-8 lg:pt-12">
+      <div className="lg:flex lg:items-end lg:justify-between">
+        <div>
+          <h2 className="hidden text-[1.5rem] font-bold lg:block">
+            คลินิกแนะนำ <span className="font-normal text-[color:var(--color-muted)] text-[0.95rem]">ใกล้คุณ</span>
+          </h2>
+          <p className="hidden text-[0.85rem] text-[color:var(--color-muted)] lg:mt-1 lg:block">
+            เรียงตาม Tier และระยะทาง
+          </p>
+        </div>
+
+        <div className="no-scrollbar -mx-5 flex gap-2 overflow-x-auto px-5 pb-1 lg:mx-0 lg:overflow-visible lg:px-0">
+          {FILTERS.map((f) => {
+            const isActive = active === f.value;
+            return (
+              <button
+                key={f.value}
+                type="button"
+                onClick={() => setActive(f.value)}
+                className={cn(
+                  "shrink-0 rounded-full border px-4 py-1.5 text-[0.82rem] font-medium transition-all lg:px-5 lg:py-2 lg:text-[0.88rem]",
+                  getChipStyles(f.value, isActive),
+                )}
+              >
+                {f.label}
+              </button>
+            );
+          })}
+        </div>
       </div>
-      <p className="mt-3 text-[0.78rem] text-[color:var(--color-muted)]">
+
+      <p className="mt-3 text-[0.78rem] text-[color:var(--color-muted)] lg:hidden">
         แสดงคลินิกใกล้คุณ — เรียงตาม tier และระยะทาง
       </p>
     </div>
