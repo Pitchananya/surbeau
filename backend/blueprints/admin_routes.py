@@ -1,15 +1,15 @@
 # backend/blueprints/admin_routes.py
 from flask import Blueprint, request, jsonify, session
 from extensions import db
-from backend.models.user import User
-from backend.models.sale import SaleProfile
-from backend.models.clinic import ClinicProfile
-from backend.models.campaign import Campaign
-from backend.models.lead import Lead
-from backend.models.commission import Commission
-from backend.models.payout import PayoutRequest
-from backend.utils.decorators import login_required, role_required
-from backend.utils.pagination import paginate
+from models.user import User
+from models.sale import SaleProfile
+from models.clinic import ClinicProfile
+from models.campaign import Campaign
+from models.lead import Lead
+from models.commission import Commission
+from models.payout import PayoutRequest
+from utils.decorators import login_required, role_required
+from utils.pagination import paginate
 from datetime import datetime
 
 admin_bp = Blueprint("admin", __name__)
@@ -427,7 +427,7 @@ def admin_list_leads():
 @login_required
 @role_required("admin")
 def list_reviews():
-    from backend.models.review import ClinicReview
+    from models.review import ClinicReview
     is_visible = request.args.get("is_visible", "").strip()
     query = ClinicReview.query
     if is_visible == "true":  query = query.filter_by(is_visible=True)

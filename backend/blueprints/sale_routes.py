@@ -1,14 +1,14 @@
 # backend/blueprints/sale_routes.py
 from flask import Blueprint, jsonify, session, request
 from extensions import db
-from backend.models.sale import SaleProfile
-from backend.models.campaign import Campaign
-from backend.models.lead import Lead
-from backend.models.commission import Commission
-from backend.models.payout import PayoutRequest
-from backend.utils.decorators import login_required, role_required
-from backend.utils.pagination import paginate
-from backend.utils.validators import sanitize_string
+from models.sale import SaleProfile
+from models.campaign import Campaign
+from models.lead import Lead
+from models.commission import Commission
+from models.payout import PayoutRequest
+from utils.decorators import login_required, role_required
+from utils.pagination import paginate
+from utils.validators import sanitize_string
 
 sale_bp = Blueprint("sale", __name__)
 
@@ -55,7 +55,7 @@ def dashboard_summary():
 @role_required("sale")
 def sale_list_campaigns():
     """GET /sale/campaigns?q=&province=&page=1&limit=12"""
-    from backend.models.clinic import ClinicProfile
+    from models.clinic import ClinicProfile
     q        = request.args.get("q", "").strip()
     province = request.args.get("province", "").strip()
 
@@ -263,7 +263,7 @@ def payout_history():
 @login_required
 @role_required("sale")
 def sale_profile():
-    from backend.models.user import User
+    from models.user import User
     user = User.query.get(session["user_id"])
     sale = _get_sale(session["user_id"])
     if not sale:
@@ -283,7 +283,7 @@ def sale_profile():
         })
 
     data = request.get_json(silent=True) or {}
-    from backend.utils.validators import is_valid_phone
+    from utils.validators import is_valid_phone
     if data.get("phone") and not is_valid_phone(data["phone"]):
         return jsonify({"error": "invalid phone format"}), 400
 

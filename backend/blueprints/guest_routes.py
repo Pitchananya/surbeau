@@ -1,12 +1,12 @@
 # backend/blueprints/guest_routes.py
 from flask import Blueprint, jsonify, request, redirect, session
 from extensions import db
-from backend.models.campaign import Campaign
-from backend.models.lead import Lead
-from backend.models.clinic import ClinicProfile
-from backend.models.sale import SaleProfile
-from backend.utils.validators import is_valid_phone, sanitize_string
-from backend.utils.pagination import paginate
+from models.campaign import Campaign
+from models.lead import Lead
+from models.clinic import ClinicProfile
+from models.sale import SaleProfile
+from utils.validators import is_valid_phone, sanitize_string
+from utils.pagination import paginate
 from math import radians, cos, sin, asin, sqrt
 
 guest_bp = Blueprint("guest", __name__)

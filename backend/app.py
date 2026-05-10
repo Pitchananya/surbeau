@@ -2,13 +2,13 @@ from flask import Flask, render_template, jsonify
 from config import Config
 from extensions import db
 
-from backend.blueprints.auth_routes import auth_bp
-from backend.blueprints.guest_routes import guest_bp
-from backend.blueprints.sale_routes import sale_bp
-from backend.blueprints.clinic_routes import clinic_bp
-from backend.blueprints.admin_routes import admin_bp
-from backend.blueprints.search_routes import search_bp
-from backend.blueprints.review_routes import review_bp
+from blueprints.auth_routes import auth_bp
+from blueprints.guest_routes import guest_bp
+from blueprints.sale_routes import sale_bp
+from blueprints.clinic_routes import clinic_bp
+from blueprints.admin_routes import admin_bp
+from blueprints.search_routes import search_bp
+from blueprints.review_routes import review_bp
 
 
 def create_app():
@@ -30,7 +30,7 @@ def create_app():
     @app.route("/campaigns")
     def public_campaigns():
         """shortcut → /guest/campaigns"""
-        from backend.models.campaign import Campaign
+        from models.campaign import Campaign
         campaigns = Campaign.query.filter_by(is_active=True).all()
         return jsonify([{
             "id": c.id, "title": c.title, "description": c.description,

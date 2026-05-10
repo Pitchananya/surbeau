@@ -1,10 +1,10 @@
 # backend/blueprints/review_routes.py
 from flask import Blueprint, request, jsonify, session
 from extensions import db
-from backend.models.review import ClinicReview
-from backend.models.clinic import ClinicProfile
-from backend.models.lead import Lead
-from backend.utils.pagination import paginate
+from models.review import ClinicReview
+from models.clinic import ClinicProfile
+from models.lead import Lead
+from utils.pagination import paginate
 
 review_bp = Blueprint("review", __name__)
 

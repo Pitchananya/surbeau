@@ -8,9 +8,9 @@ Search & Filter API
 """
 from flask import Blueprint, request, jsonify
 from extensions import db
-from backend.models.campaign import Campaign
-from backend.models.clinic import ClinicProfile
-from backend.utils.pagination import paginate
+from models.campaign import Campaign
+from models.clinic import ClinicProfile
+from utils.pagination import paginate
 
 search_bp = Blueprint("search", __name__)
 

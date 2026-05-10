@@ -1,14 +1,14 @@
 # backend/blueprints/clinic_routes.py
 from flask import Blueprint, request, jsonify, session
 from extensions import db
-from backend.models.user import User
-from backend.models.clinic import ClinicProfile
-from backend.models.campaign import Campaign
-from backend.models.lead import Lead
-from backend.models.commission import Commission
-from backend.utils.decorators import login_required, role_required
-from backend.utils.pagination import paginate
-from backend.utils.validators import (is_valid_email, is_valid_phone,
+from models.user import User
+from models.clinic import ClinicProfile
+from models.campaign import Campaign
+from models.lead import Lead
+from models.commission import Commission
+from utils.decorators import login_required, role_required
+from utils.pagination import paginate
+from utils.validators import (is_valid_email, is_valid_phone,
                                        is_positive_number, sanitize_string)
 from datetime import datetime, date
 

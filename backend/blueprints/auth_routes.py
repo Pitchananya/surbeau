@@ -1,9 +1,9 @@
 # backend/blueprints/auth_routes.py
 from flask import Blueprint, request, jsonify, session
 from extensions import db
-from backend.models.user import User
-from backend.models.sale import SaleProfile
-from backend.utils.validators import is_valid_email, is_valid_phone, sanitize_string
+from models.user import User
+from models.sale import SaleProfile
+from utils.validators import is_valid_email, is_valid_phone, sanitize_string
 
 auth_bp = Blueprint("auth", __name__)
 
