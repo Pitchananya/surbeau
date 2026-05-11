@@ -69,7 +69,7 @@ export function MobileMenu() {
           <aside
             role="dialog"
             aria-label="เมนูหลัก"
-            className="absolute right-0 top-0 flex h-full w-full max-w-xs flex-col overflow-y-auto border-l border-[color:var(--color-border-default)] bg-[color:var(--color-background)] shadow-2xl"
+            className="absolute left-0 top-0 flex h-full w-full max-w-xs flex-col overflow-y-auto border-r border-[color:var(--color-border-default)] bg-[color:var(--color-background)] shadow-2xl"
           >
             {/* Header */}
             <div className="flex items-center justify-between border-b border-[color:var(--color-border-soft)] px-5 py-4">
