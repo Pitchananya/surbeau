@@ -17,6 +17,10 @@ export const authConfig = {
     LINE({
       clientId: process.env.LINE_CHANNEL_ID,
       clientSecret: process.env.LINE_CHANNEL_SECRET,
+      // Drop `email` from the default scope. LINE requires a separate
+      // approval ("Email permission" application) — requesting `email` scope
+      // without it can fail the OIDC token verification step.
+      authorization: { params: { scope: "openid profile" } },
     }),
   ],
   callbacks: {

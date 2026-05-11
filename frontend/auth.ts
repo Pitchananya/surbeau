@@ -18,10 +18,24 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
   // verbose error logging so OAuthCallbackError shows the underlying cause
   debug: process.env.NODE_ENV !== "production" || process.env.AUTH_DEBUG === "1",
   logger: {
-    error(error) {
-      console.error("[auth][error]", error);
+    error(error: Error & { cause?: unknown }) {
+      console.error("[auth][error]", error.name, error.message);
+      if (error.cause) {
+        // Underlying cause (LINE token endpoint response, invalid_client,
+        // signature failure, etc.) — this is the actual root cause.
+        console.error("[auth][error] cause:", error.cause);
+        try {
+          console.error(
+            "[auth][error] cause-json:",
+            JSON.stringify(error.cause, Object.getOwnPropertyNames(error.cause as object)),
+          );
+        } catch {
+          /* ignore */
+        }
+      }
+      console.error("[auth][error] stack:", error.stack);
     },
-    warn(code) {
+    warn(code: string) {
       console.warn("[auth][warn]", code);
     },
   },
