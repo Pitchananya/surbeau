@@ -3,6 +3,7 @@ import {
   boolean,
   date,
   integer,
+  jsonb,
   numeric,
   pgEnum,
   pgTable,
@@ -16,7 +17,7 @@ import {
 // ═══════════════════════════════════════════════════════════════════════════
 // Enums
 // ═══════════════════════════════════════════════════════════════════════════
-export const userRole = pgEnum("user_role", ["admin", "sale", "clinic", "customer"]);
+export const userRole = pgEnum("user_role", ["admin", "sale", "clinic", "customer", "candidate"]);
 export const userStatus = pgEnum("user_status", ["active", "pending", "blocked"]);
 export const saleStatus = pgEnum("sale_status", ["pending", "approved", "rejected", "blocked"]);
 export const clinicStatus = pgEnum("clinic_status", ["pending", "approved", "rejected", "blocked"]);
@@ -26,6 +27,17 @@ export const commissionStatus = pgEnum("commission_status", [
   "pending", "approved", "awaiting_payout", "paid", "cancelled",
 ]);
 export const payoutStatus = pgEnum("payout_status", ["pending", "approved", "rejected"]);
+
+// Phase 2 — Job marketplace
+export const jobStatus = pgEnum("job_status", ["open", "closed", "draft"]);
+export const applicationStatus = pgEnum("application_status", [
+  "pending", "shortlisted", "interviewing", "hired", "rejected", "withdrawn",
+]);
+export const employmentType = pgEnum("employment_type", [
+  "full_time", "part_time", "contract", "freelance", "internship",
+]);
+export const membershipPlan = pgEnum("membership_plan", ["free", "premium_year"]);
+export const membershipStatusEnum = pgEnum("membership_status", ["active", "expired", "cancelled"]);
 
 // ═══════════════════════════════════════════════════════════════════════════
 // users — single source of truth (no Auth.js adapter; we manage upsert in
@@ -212,6 +224,91 @@ export const commissionsRelations = relations(commissions, ({ one }) => ({
 }));
 
 // ═══════════════════════════════════════════════════════════════════════════
+// Phase 2 — Job marketplace
+// ═══════════════════════════════════════════════════════════════════════════
+export const candidateProfiles = pgTable("candidate_profiles", {
+  id:               uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId:           uuid("user_id").notNull().unique().references(() => users.id, { onDelete: "cascade" }),
+  bio:              text("bio"),
+  headline:         text("headline"),
+  skills:           text("skills").array().notNull().default(sql`'{}'::text[]`),
+  specialties:      text("specialties").array().notNull().default(sql`'{}'::text[]`),
+  experienceYears:  integer("experience_years"),
+  licenseFiles:     jsonb("license_files").notNull().default(sql`'[]'::jsonb`),
+  portfolio:        jsonb("portfolio").notNull().default(sql`'[]'::jsonb`),
+  isVerified:       boolean("is_verified").notNull().default(false),
+  createdAt:        timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt:        timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const jobs = pgTable("jobs", {
+  id:              uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  clinicId:        uuid("clinic_id").notNull().references(() => clinicProfiles.id, { onDelete: "cascade" }),
+  title:           text("title").notNull(),
+  description:     text("description"),
+  requiredSkills:  text("required_skills").array().notNull().default(sql`'{}'::text[]`),
+  employmentType:  employmentType("employment_type").notNull().default("full_time"),
+  salaryMin:       numeric("salary_min", { precision: 12, scale: 2 }),
+  salaryMax:       numeric("salary_max", { precision: 12, scale: 2 }),
+  location:        text("location"),
+  isRemote:        boolean("is_remote").notNull().default(false),
+  status:          jobStatus("status").notNull().default("open"),
+  isFeatured:      boolean("is_featured").notNull().default(false),
+  closesAt:        timestamp("closes_at", { withTimezone: true }),
+  createdAt:       timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt:       timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const applications = pgTable("applications", {
+  id:                uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  jobId:             uuid("job_id").notNull().references(() => jobs.id, { onDelete: "cascade" }),
+  candidateId:       uuid("candidate_id").notNull().references(() => candidateProfiles.id, { onDelete: "cascade" }),
+  coverLetter:       text("cover_letter"),
+  resumeUrl:         text("resume_url"),
+  status:            applicationStatus("status").notNull().default("pending"),
+  statusUpdatedAt:   timestamp("status_updated_at", { withTimezone: true }),
+  statusUpdatedBy:   uuid("status_updated_by").references(() => users.id),
+  createdAt:         timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  uniqueIndex("applications_job_candidate_unique").on(t.jobId, t.candidateId),
+]);
+
+export const memberships = pgTable("memberships", {
+  id:             uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId:         uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  plan:           membershipPlan("plan").notNull(),
+  status:         membershipStatusEnum("status").notNull().default("active"),
+  amount:         numeric("amount", { precision: 12, scale: 2 }).notNull(),
+  paymentMethod:  text("payment_method"),
+  paymentRef:     text("payment_ref"),
+  paidAt:         timestamp("paid_at", { withTimezone: true }).notNull().defaultNow(),
+  expiresAt:      timestamp("expires_at", { withTimezone: true }).notNull(),
+  createdAt:      timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Phase 2 — Relations
+// ═══════════════════════════════════════════════════════════════════════════
+export const candidateProfilesRelations = relations(candidateProfiles, ({ one, many }) => ({
+  user:         one(users, { fields: [candidateProfiles.userId], references: [users.id] }),
+  applications: many(applications),
+}));
+
+export const jobsRelations = relations(jobs, ({ one, many }) => ({
+  clinic:       one(clinicProfiles, { fields: [jobs.clinicId], references: [clinicProfiles.id] }),
+  applications: many(applications),
+}));
+
+export const applicationsRelations = relations(applications, ({ one }) => ({
+  job:       one(jobs, { fields: [applications.jobId], references: [jobs.id] }),
+  candidate: one(candidateProfiles, { fields: [applications.candidateId], references: [candidateProfiles.id] }),
+}));
+
+export const membershipsRelations = relations(memberships, ({ one }) => ({
+  user: one(users, { fields: [memberships.userId], references: [users.id] }),
+}));
+
+// ═══════════════════════════════════════════════════════════════════════════
 // Type helpers
 // ═══════════════════════════════════════════════════════════════════════════
 export type User = typeof users.$inferSelect;
@@ -219,3 +316,7 @@ export type NewUser = typeof users.$inferInsert;
 export type ClinicProfile = typeof clinicProfiles.$inferSelect;
 export type Campaign = typeof campaigns.$inferSelect;
 export type Lead = typeof leads.$inferSelect;
+export type CandidateProfile = typeof candidateProfiles.$inferSelect;
+export type Job = typeof jobs.$inferSelect;
+export type Application = typeof applications.$inferSelect;
+export type Membership = typeof memberships.$inferSelect;

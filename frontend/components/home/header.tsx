@@ -4,8 +4,8 @@ import { BrandLockup } from "@/components/brand/logo";
 
 const NAV_ITEMS = [
   { href: "/", label: "ค้นหาคลินิก" },
+  { href: "/jobs", label: "หางาน" },
   { href: "/promo", label: "โปรร้อน" },
-  { href: "/categories", label: "หัตถการ" },
   { href: "/about", label: "เกี่ยวกับเรา" },
   { href: "/for-clinic", label: "สำหรับคลินิก" },
 ];

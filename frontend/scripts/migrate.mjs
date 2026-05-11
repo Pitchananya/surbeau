@@ -65,11 +65,9 @@ function splitSqlStatements(input) {
   let i = 0;
   while (i < input.length) {
     if (!inDollar && input[i] === "-" && input[i + 1] === "-") {
-      // skip line comment
-      while (i < input.length && input[i] !== "\n") {
-        current += input[i];
-        i++;
-      }
+      // strip line comment entirely — don't include in `current`,
+      // so a leading comment doesn't fool the "startsWith --" filter below
+      while (i < input.length && input[i] !== "\n") i++;
       continue;
     }
     if (input[i] === "$") {

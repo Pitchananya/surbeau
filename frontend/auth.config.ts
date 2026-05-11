@@ -30,6 +30,7 @@ export const authConfig = {
       const isProtected =
         path === "/sale" || path.startsWith("/sale/") ||
         path === "/clinic" || path.startsWith("/clinic/") ||
+        path === "/candidate" || path.startsWith("/candidate/") ||
         path === "/admin" || path.startsWith("/admin/");
 
       if (isProtected && !isLoggedIn) {
