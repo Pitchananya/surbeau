@@ -3,7 +3,7 @@ import { Footer } from "@/components/home/footer";
 import { JobCard } from "@/components/jobs/job-card";
 import { getOpenJobs } from "@/lib/queries/jobs";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 export default async function JobBoardPage() {
   const jobs = await getOpenJobs(30);
