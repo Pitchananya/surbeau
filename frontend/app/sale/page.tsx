@@ -3,7 +3,12 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { Header } from "@/components/home/header";
 import { Footer } from "@/components/home/footer";
-import { getSaleSummary, getSaleLeads } from "@/lib/queries/sale";
+import { ReferralLinks } from "@/components/sale/referral-links";
+import {
+  getSaleSummary,
+  getSaleLeads,
+  getPromotableCampaigns,
+} from "@/lib/queries/sale";
 import { formatBaht } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -17,6 +22,7 @@ export default async function SaleDashboardPage() {
 
   const recentLeads = await getSaleLeads(summary.saleId, 5);
   const isApproved = summary.status === "approved";
+  const promotable = isApproved ? await getPromotableCampaigns(8) : [];
 
   return (
     <main className="flex min-h-dvh flex-col">
@@ -81,9 +87,31 @@ export default async function SaleDashboardPage() {
           </div>
         </section>
 
+        {/* Referral links (FR-14) */}
+        {isApproved && (
+          <section className="mt-6 rounded-2xl border border-[color:var(--color-gold-deep)] bg-gradient-to-br from-[color:var(--color-gold)]/8 to-transparent p-5 lg:mt-6 lg:p-7">
+            <div className="mb-4 flex items-center justify-between">
+              <div>
+                <h2 className="text-[1.05rem] font-bold lg:text-[1.2rem]">
+                  🔗 ลิงก์อ้างอิงของคุณ
+                </h2>
+                <p className="mt-0.5 text-[0.8rem] text-[color:var(--color-muted)]">
+                  copy แล้วแชร์ไป LINE, Facebook, IG — ลูกค้าที่กรอกฟอร์มผ่านลิงก์จะนับเป็นของคุณ
+                </p>
+              </div>
+            </div>
+            <ReferralLinks saleId={summary.saleId} campaigns={promotable} />
+          </section>
+        )}
+
         {/* Recent leads */}
         <section className="mt-6 rounded-2xl border border-[color:var(--color-border-default)] bg-[color:var(--color-surface)] p-5 lg:mt-6 lg:p-7">
-          <h2 className="text-[1.05rem] font-bold lg:text-[1.2rem]">ลูกค้าล่าสุด</h2>
+          <div className="flex items-center justify-between">
+            <h2 className="text-[1.05rem] font-bold lg:text-[1.2rem]">ลูกค้าล่าสุด</h2>
+            <Link href="/sale/leads" className="text-[0.82rem] text-[color:var(--color-gold-bright)] hover:underline">
+              ดูทั้งหมด →
+            </Link>
+          </div>
           {recentLeads.length === 0 ? (
             <p className="mt-3 text-[0.88rem] text-[color:var(--color-muted)]">
               ยังไม่มีลูกค้า — แชร์ลิงก์แคมเปญของคุณเพื่อเริ่มหารายได้

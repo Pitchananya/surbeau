@@ -1,5 +1,5 @@
 import { and, desc, eq, sql, sum } from "drizzle-orm";
-import { db, saleProfiles, leads, commissions, payoutRequests, campaigns } from "@/db";
+import { db, saleProfiles, leads, commissions, payoutRequests, campaigns, clinicProfiles } from "@/db";
 
 export async function getSaleByUserId(userId: string) {
   return db.query.saleProfiles.findFirst({
@@ -98,4 +98,28 @@ export async function getSalePayoutHistory(saleId: string, limit = 10) {
     orderBy: [desc(payoutRequests.createdAt)],
     limit,
   });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Active campaigns the Sale can promote (FR-13, FR-14)
+// Ranked by featured + highest commission
+// ═══════════════════════════════════════════════════════════════════════════
+export async function getPromotableCampaigns(limit = 10) {
+  return db
+    .select({
+      campaignId: campaigns.id,
+      clinicId: campaigns.clinicId,
+      title: campaigns.title,
+      promoPrice: campaigns.promoPrice,
+      commissionPerSuccess: campaigns.commissionPerSuccess,
+      clinicName: clinicProfiles.clinicName,
+    })
+    .from(campaigns)
+    .innerJoin(clinicProfiles, eq(clinicProfiles.id, campaigns.clinicId))
+    .where(and(
+      eq(campaigns.isActive, true),
+      eq(clinicProfiles.status, "approved"),
+    ))
+    .orderBy(desc(campaigns.isFeatured), desc(campaigns.commissionPerSuccess))
+    .limit(limit);
 }

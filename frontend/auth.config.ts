@@ -37,6 +37,13 @@ export const authConfig = {
         loginUrl.searchParams.set("next", path);
         return Response.redirect(loginUrl);
       }
+
+      // /admin is admin-only (no self-promotion path)
+      const isAdminRoute = path === "/admin" || path.startsWith("/admin/");
+      if (isAdminRoute && isLoggedIn && auth.user.role !== "admin") {
+        return Response.redirect(new URL("/", nextUrl));
+      }
+
       if (isAuthRoute && isLoggedIn && path === "/auth/login") {
         return Response.redirect(new URL("/", nextUrl));
       }
