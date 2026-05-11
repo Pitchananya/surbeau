@@ -21,6 +21,17 @@ export const authConfig = {
       // approval ("Email permission" application) — requesting `email` scope
       // without it can fail the OIDC token verification step.
       authorization: { params: { scope: "openid profile" } },
+      profile(p) {
+        // Logs the raw LINE userinfo response so we can confirm token exchange succeeded.
+        // If we never see this log, the failure is upstream in token exchange.
+        console.log("[LINE profile]", JSON.stringify(p));
+        return {
+          id: p.sub,
+          name: p.name,
+          image: p.picture,
+          email: p.email,
+        };
+      },
     }),
   ],
   callbacks: {
