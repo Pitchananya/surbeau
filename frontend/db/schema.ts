@@ -224,6 +224,32 @@ export const commissionsRelations = relations(commissions, ({ one }) => ({
 }));
 
 // ═══════════════════════════════════════════════════════════════════════════
+// Contact inquiries (/contact-sales form)
+// ═══════════════════════════════════════════════════════════════════════════
+export const inquiryStatus = pgEnum("inquiry_status", [
+  "new", "contacted", "qualified", "closed", "spam",
+]);
+export const inquiryKind = pgEnum("inquiry_kind", [
+  "clinic_premier", "clinic_general", "general",
+]);
+
+export const contactInquiries = pgTable("contact_inquiries", {
+  id:            uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  kind:          inquiryKind("kind").notNull().default("general"),
+  name:          text("name").notNull(),
+  organization:  text("organization"),
+  email:         text("email"),
+  phone:         text("phone"),
+  message:       text("message"),
+  planInterest:  text("plan_interest"),
+  status:        inquiryStatus("status").notNull().default("new"),
+  notes:         text("notes"),
+  handledBy:     uuid("handled_by").references(() => users.id),
+  handledAt:     timestamp("handled_at", { withTimezone: true }),
+  createdAt:     timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
 // Phase 2 — Job marketplace
 // ═══════════════════════════════════════════════════════════════════════════
 export const candidateProfiles = pgTable("candidate_profiles", {

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Search, MapPin } from "lucide-react";
 import { BrandLockup } from "@/components/brand/logo";
+import { MobileMenu } from "@/components/home/mobile-menu";
 
 const NAV_ITEMS = [
   { href: "/", label: "ค้นหาคลินิก" },
@@ -16,12 +17,15 @@ export function Header() {
       {/* Mobile header */}
       <header className="flex items-center justify-between px-5 pt-6 pb-3 lg:hidden">
         <BrandLockup />
-        <Link
-          href="/auth/login"
-          className="rounded-full border border-[color:var(--color-gold-deep)] px-4 py-1.5 text-[0.78rem] font-medium text-[color:var(--color-gold-bright)] transition-colors hover:bg-[color:var(--color-gold-deep)]/10"
-        >
-          เข้าสู่ระบบ
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/auth/login"
+            className="rounded-full border border-[color:var(--color-gold-deep)] px-4 py-1.5 text-[0.78rem] font-medium text-[color:var(--color-gold-bright)] transition-colors hover:bg-[color:var(--color-gold-deep)]/10"
+          >
+            เข้าสู่ระบบ
+          </Link>
+          <MobileMenu />
+        </div>
       </header>
 
       {/* Desktop top nav */}
