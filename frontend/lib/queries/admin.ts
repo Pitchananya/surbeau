@@ -8,6 +8,8 @@ import {
   leads,
   commissions,
   payoutRequests,
+  candidateProfiles,
+  memberships,
 } from "@/db";
 
 export type AdminSummary = {
@@ -196,7 +198,7 @@ export async function getPendingPayouts() {
 // Users list (FR-32)
 // ═══════════════════════════════════════════════════════════════════════════
 export async function getUsers(filter?: {
-  role?: "admin" | "sale" | "clinic" | "customer";
+  role?: "admin" | "sale" | "clinic" | "customer" | "candidate";
   status?: "active" | "pending" | "blocked";
 }) {
   const conditions = [];
@@ -217,4 +219,61 @@ export async function getUsers(filter?: {
     .where(conditions.length > 0 ? and(...conditions) : undefined)
     .orderBy(desc(users.createdAt))
     .limit(100);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Candidates for KYC review (Phase 2)
+// ═══════════════════════════════════════════════════════════════════════════
+export async function getCandidatesForKYC(filter?: { verified?: boolean }) {
+  const conditions = [];
+  if (filter?.verified !== undefined) {
+    conditions.push(eq(candidateProfiles.isVerified, filter.verified));
+  }
+
+  return db
+    .select({
+      candidateId: candidateProfiles.id,
+      userId: candidateProfiles.userId,
+      headline: candidateProfiles.headline,
+      bio: candidateProfiles.bio,
+      experienceYears: candidateProfiles.experienceYears,
+      skills: candidateProfiles.skills,
+      specialties: candidateProfiles.specialties,
+      licenseFiles: candidateProfiles.licenseFiles,
+      portfolio: candidateProfiles.portfolio,
+      isVerified: candidateProfiles.isVerified,
+      createdAt: candidateProfiles.createdAt,
+      userName: users.name,
+      userEmail: users.email,
+      userPhone: users.phone,
+    })
+    .from(candidateProfiles)
+    .innerJoin(users, eq(users.id, candidateProfiles.userId))
+    .where(conditions.length > 0 ? and(...conditions) : undefined)
+    .orderBy(desc(candidateProfiles.createdAt))
+    .limit(100);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Pending memberships (Phase 2)
+// ═══════════════════════════════════════════════════════════════════════════
+export async function getPendingMemberships() {
+  return db
+    .select({
+      membershipId: memberships.id,
+      userId: memberships.userId,
+      plan: memberships.plan,
+      amount: memberships.amount,
+      paymentMethod: memberships.paymentMethod,
+      paymentRef: memberships.paymentRef,
+      expiresAt: memberships.expiresAt,
+      createdAt: memberships.createdAt,
+      userName: users.name,
+      userEmail: users.email,
+      userPhone: users.phone,
+    })
+    .from(memberships)
+    .innerJoin(users, eq(users.id, memberships.userId))
+    .where(eq(memberships.status, "pending"))
+    .orderBy(desc(memberships.createdAt));
 }

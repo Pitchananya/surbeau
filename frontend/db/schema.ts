@@ -37,7 +37,7 @@ export const employmentType = pgEnum("employment_type", [
   "full_time", "part_time", "contract", "freelance", "internship",
 ]);
 export const membershipPlan = pgEnum("membership_plan", ["free", "premium_year"]);
-export const membershipStatusEnum = pgEnum("membership_status", ["active", "expired", "cancelled"]);
+export const membershipStatusEnum = pgEnum("membership_status", ["pending", "active", "expired", "cancelled"]);
 
 // ═══════════════════════════════════════════════════════════════════════════
 // users — single source of truth (no Auth.js adapter; we manage upsert in

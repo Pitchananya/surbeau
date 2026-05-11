@@ -10,6 +10,8 @@ import {
   clinicProfiles,
   payoutRequests,
   commissions,
+  candidateProfiles,
+  memberships,
 } from "@/db";
 
 async function requireAdmin() {
@@ -217,6 +219,71 @@ export async function rejectPayout(payoutId: string): Promise<ActionResult> {
     revalidatePath("/admin/payouts");
     revalidatePath("/sale");
     return { ok: true, message: `ปฏิเสธแล้ว — คืน commission ${commissionsRestored} รายการกลับเป็น approved` };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "เกิดข้อผิดพลาด" };
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// KYC — Candidate license verification (Phase 2)
+// ═══════════════════════════════════════════════════════════════════════════
+export async function setCandidateVerified(
+  candidateId: string,
+  verified: boolean,
+): Promise<ActionResult> {
+  try {
+    await requireAdmin();
+    await db.update(candidateProfiles)
+      .set({ isVerified: verified, updatedAt: new Date() })
+      .where(eq(candidateProfiles.id, candidateId));
+    revalidatePath("/admin/candidates");
+    revalidatePath("/candidate");
+    return { ok: true, message: verified ? "Verify แล้ว" : "ลบ verify แล้ว" };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "เกิดข้อผิดพลาด" };
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Membership approval (Phase 2)
+// ═══════════════════════════════════════════════════════════════════════════
+export async function approveMembership(membershipId: string): Promise<ActionResult> {
+  try {
+    await requireAdmin();
+    const m = await db.query.memberships.findFirst({
+      where: eq(memberships.id, membershipId),
+      columns: { id: true, userId: true, status: true },
+    });
+    if (!m) return { ok: false, error: "ไม่พบ membership" };
+    if (m.status !== "pending") return { ok: false, error: "ไม่ใช่สถานะ pending" };
+
+    // Cancel any other active memberships for this user (shouldn't exist due to unique idx but be safe)
+    await db.transaction(async (tx) => {
+      await tx.update(memberships)
+        .set({ status: "cancelled" })
+        .where(and(eq(memberships.userId, m.userId), eq(memberships.status, "active")));
+      await tx.update(memberships)
+        .set({ status: "active" })
+        .where(eq(memberships.id, membershipId));
+    });
+
+    revalidatePath("/admin/memberships");
+    revalidatePath("/candidate");
+    return { ok: true, message: "อนุมัติ Premium แล้ว" };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "เกิดข้อผิดพลาด" };
+  }
+}
+
+export async function rejectMembership(membershipId: string): Promise<ActionResult> {
+  try {
+    await requireAdmin();
+    await db.update(memberships)
+      .set({ status: "cancelled" })
+      .where(and(eq(memberships.id, membershipId), eq(memberships.status, "pending")));
+    revalidatePath("/admin/memberships");
+    revalidatePath("/candidate");
+    return { ok: true, message: "ปฏิเสธคำขอ" };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : "เกิดข้อผิดพลาด" };
   }

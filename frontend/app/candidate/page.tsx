@@ -8,6 +8,7 @@ import {
   getCandidateByUserId,
   getCandidateApplications,
 } from "@/lib/queries/jobs";
+import { getActiveOrPendingMembership } from "@/lib/queries/membership";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +19,10 @@ export default async function CandidateDashboardPage() {
   const candidate = await getCandidateByUserId(session.user.id);
   if (!candidate) redirect("/candidate/setup");
 
-  const apps = await getCandidateApplications(candidate.id, 50);
+  const [apps, membership] = await Promise.all([
+    getCandidateApplications(candidate.id, 50),
+    getActiveOrPendingMembership(session.user.id),
+  ]);
 
   const statusCount = {
     pending: apps.filter((a) => a.status === "pending").length,
@@ -99,21 +103,46 @@ export default async function CandidateDashboardPage() {
           )}
         </section>
 
-        {/* Membership upgrade CTA */}
+        {/* Membership state */}
         <section className="mt-6 rounded-2xl border border-[color:var(--color-gold-deep)] bg-gradient-to-br from-[color:var(--color-gold)]/8 to-transparent p-5 lg:mt-6 lg:p-7">
-          <h3 className="font-bold text-[color:var(--color-gold-bright)] lg:text-[1.1rem]">
-            ⭐ Premium Membership — 300฿/ปี
-          </h3>
-          <p className="mt-1 text-[0.85rem] text-[color:var(--color-muted-strong)]">
-            สมัครงานพรีเมียมไม่จำกัด · โปรไฟล์ติด Featured · ส่งเรซูเม่ฉบับเต็ม · เห็นข้อมูลก่อนคนอื่น
-          </p>
-          <button
-            type="button"
-            disabled
-            className="mt-3 inline-block rounded-full bg-[color:var(--color-surface-elevated)] px-5 py-2 text-[0.85rem] font-medium text-[color:var(--color-muted)]"
-          >
-            สมัครสมาชิก (ระบบจ่ายเงินกำลังจะเปิด)
-          </button>
+          {membership?.status === "active" ? (
+            <>
+              <h3 className="font-bold text-[color:var(--color-gold-bright)] lg:text-[1.1rem]">
+                ⭐ Premium Member · เหลือ {membership.daysLeft} วัน
+              </h3>
+              <p className="mt-1 text-[0.85rem] text-[color:var(--color-muted-strong)]">
+                หมดอายุ {membership.expiresAt.toLocaleDateString("th-TH", {
+                  year: "numeric", month: "long", day: "numeric",
+                })}
+              </p>
+            </>
+          ) : membership?.status === "pending" ? (
+            <>
+              <h3 className="font-bold text-[color:var(--color-gold-bright)] lg:text-[1.1rem]">
+                ⏳ คำขอ Premium รอ admin ตรวจสอบ
+              </h3>
+              <p className="mt-1 text-[0.85rem] text-[color:var(--color-muted-strong)]">
+                ส่งคำขอเมื่อ {membership.paidAt.toLocaleDateString("th-TH", {
+                  year: "numeric", month: "short", day: "numeric",
+                })} — ปกติยืนยันใน &lt; 24 ชม.
+              </p>
+            </>
+          ) : (
+            <>
+              <h3 className="font-bold text-[color:var(--color-gold-bright)] lg:text-[1.1rem]">
+                ⭐ Premium Membership — 300฿/ปี
+              </h3>
+              <p className="mt-1 text-[0.85rem] text-[color:var(--color-muted-strong)]">
+                สมัครงานพรีเมียมไม่จำกัด · โปรไฟล์ติด Featured · ส่งเรซูเม่ฉบับเต็ม · เห็นข้อมูลก่อนคนอื่น
+              </p>
+              <Link
+                href="/candidate/upgrade"
+                className="mt-3 inline-block rounded-full bg-[color:var(--color-gold)] px-5 py-2 text-[0.88rem] font-semibold text-black hover:bg-[color:var(--color-gold-bright)]"
+              >
+                อัปเกรดเลย →
+              </Link>
+            </>
+          )}
         </section>
       </div>
 

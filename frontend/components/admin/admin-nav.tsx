@@ -4,6 +4,8 @@ const ADMIN_TABS = [
   { href: "/admin", label: "ภาพรวม" },
   { href: "/admin/sales", label: "Sales" },
   { href: "/admin/clinics", label: "คลินิก" },
+  { href: "/admin/candidates", label: "Candidates (KYC)" },
+  { href: "/admin/memberships", label: "Premium" },
   { href: "/admin/payouts", label: "การถอนเงิน" },
   { href: "/admin/users", label: "ผู้ใช้" },
 ];
