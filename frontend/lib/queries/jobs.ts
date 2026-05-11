@@ -98,6 +98,59 @@ export async function hasApplied(candidateId: string, jobId: string): Promise<bo
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+// Applications for the clinic (across all their jobs)
+// ═══════════════════════════════════════════════════════════════════════════
+const APP_STATUS_VALUES = [
+  "pending", "shortlisted", "interviewing", "hired", "rejected", "withdrawn",
+] as const;
+
+export async function getClinicApplications(
+  clinicId: string,
+  filters?: { jobId?: string; status?: string },
+) {
+  const conditions = [eq(jobs.clinicId, clinicId)];
+  if (filters?.jobId) conditions.push(eq(jobs.id, filters.jobId));
+  if (filters?.status && APP_STATUS_VALUES.includes(filters.status as (typeof APP_STATUS_VALUES)[number])) {
+    conditions.push(
+      eq(applications.status, filters.status as (typeof APP_STATUS_VALUES)[number]),
+    );
+  }
+
+  return db
+    .select({
+      id: applications.id,
+      status: applications.status,
+      coverLetter: applications.coverLetter,
+      resumeUrl: applications.resumeUrl,
+      createdAt: applications.createdAt,
+      statusUpdatedAt: applications.statusUpdatedAt,
+      jobId: jobs.id,
+      jobTitle: jobs.title,
+      candidateId: candidateProfiles.id,
+      candidateHeadline: candidateProfiles.headline,
+      candidateBio: candidateProfiles.bio,
+      candidateExperience: candidateProfiles.experienceYears,
+      candidateSkills: candidateProfiles.skills,
+      candidateSpecialties: candidateProfiles.specialties,
+      candidateIsVerified: candidateProfiles.isVerified,
+    })
+    .from(applications)
+    .innerJoin(jobs, eq(jobs.id, applications.jobId))
+    .innerJoin(candidateProfiles, eq(candidateProfiles.id, applications.candidateId))
+    .where(and(...conditions))
+    .orderBy(desc(applications.createdAt));
+}
+
+// Distinct list of jobs the clinic has applications for (for filter dropdown)
+export async function getClinicJobsForFilter(clinicId: string) {
+  return db
+    .select({ id: jobs.id, title: jobs.title })
+    .from(jobs)
+    .where(eq(jobs.clinicId, clinicId))
+    .orderBy(desc(jobs.createdAt));
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // Clinic's job management
 // ═══════════════════════════════════════════════════════════════════════════
 export async function getClinicJobs(clinicId: string) {

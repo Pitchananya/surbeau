@@ -113,10 +113,13 @@ export default async function ClinicJobsPage() {
                 </div>
 
                 <div className="mt-4 flex items-center justify-between border-t border-[color:var(--color-border-soft)] pt-4">
-                  <span className="inline-flex items-center gap-1.5 text-[0.85rem] text-[color:var(--color-foreground)]">
+                  <Link
+                    href={`/clinic/applications?job=${j.id}` as never}
+                    className="inline-flex items-center gap-1.5 text-[0.85rem] text-[color:var(--color-foreground)] hover:text-[color:var(--color-gold-bright)]"
+                  >
                     <Users className="h-3.5 w-3.5 text-[color:var(--color-gold)]" />
-                    <b>{j.applicationCount}</b> ใบสมัคร
-                  </span>
+                    <b>{j.applicationCount}</b> ใบสมัคร →
+                  </Link>
                   <span className="text-[0.72rem] text-[color:var(--color-muted)]">
                     ลงประกาศ {new Date(j.createdAt).toLocaleDateString("th-TH", {
                       year: "numeric", month: "short", day: "numeric",

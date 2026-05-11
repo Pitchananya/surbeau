@@ -126,24 +126,44 @@ export default async function ClinicDashboardPage() {
         </section>
 
         {/* Shortcuts */}
-        <section className="mt-6 grid gap-3 lg:mt-6 lg:grid-cols-2 lg:gap-5">
+        <section className="mt-6 grid gap-3 lg:mt-6 lg:grid-cols-4 lg:gap-5">
           <Link
             href="/clinic/campaigns"
-            className="block rounded-2xl border border-[color:var(--color-border-default)] bg-[color:var(--color-surface)] p-5 transition-colors hover:border-[color:var(--color-gold-muted)] lg:p-7"
+            className="block rounded-2xl border border-[color:var(--color-border-default)] bg-[color:var(--color-surface)] p-5 transition-colors hover:border-[color:var(--color-gold-muted)] lg:p-6"
           >
-            <h3 className="font-bold lg:text-[1.1rem]">จัดการแคมเปญ</h3>
-            <p className="mt-1 text-[0.85rem] text-[color:var(--color-muted)]">
-              เพิ่ม / ปิด / แก้ราคา / ดูสถิติ
+            <h3 className="font-bold lg:text-[1.05rem]">จัดการแคมเปญ</h3>
+            <p className="mt-1 text-[0.82rem] text-[color:var(--color-muted)]">
+              เพิ่ม / ปิด / แก้ราคา
             </p>
           </Link>
 
           <Link
             href="/clinic/leads"
-            className="block rounded-2xl border border-[color:var(--color-border-default)] bg-[color:var(--color-surface)] p-5 transition-colors hover:border-[color:var(--color-gold-muted)] lg:p-7"
+            className="block rounded-2xl border border-[color:var(--color-border-default)] bg-[color:var(--color-surface)] p-5 transition-colors hover:border-[color:var(--color-gold-muted)] lg:p-6"
           >
-            <h3 className="font-bold lg:text-[1.1rem]">รายชื่อลูกค้า</h3>
-            <p className="mt-1 text-[0.85rem] text-[color:var(--color-muted)]">
-              อัปเดตสถานะ / ติดต่อกลับ / ปิดเคส
+            <h3 className="font-bold lg:text-[1.05rem]">รายชื่อลูกค้า</h3>
+            <p className="mt-1 text-[0.82rem] text-[color:var(--color-muted)]">
+              อัปเดต / ติดต่อ / ปิดเคส
+            </p>
+          </Link>
+
+          <Link
+            href="/clinic/jobs"
+            className="block rounded-2xl border border-[color:var(--color-border-default)] bg-[color:var(--color-surface)] p-5 transition-colors hover:border-[color:var(--color-gold-muted)] lg:p-6"
+          >
+            <h3 className="font-bold lg:text-[1.05rem]">รับสมัครงาน</h3>
+            <p className="mt-1 text-[0.82rem] text-[color:var(--color-muted)]">
+              ลงประกาศ / ปิดรับ
+            </p>
+          </Link>
+
+          <Link
+            href="/clinic/applications"
+            className="block rounded-2xl border border-[color:var(--color-border-default)] bg-[color:var(--color-surface)] p-5 transition-colors hover:border-[color:var(--color-gold-muted)] lg:p-6"
+          >
+            <h3 className="font-bold lg:text-[1.05rem]">ใบสมัคร</h3>
+            <p className="mt-1 text-[0.82rem] text-[color:var(--color-muted)]">
+              คัดเลือก / สัมภาษณ์ / รับ
             </p>
           </Link>
         </section>

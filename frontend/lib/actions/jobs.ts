@@ -232,3 +232,66 @@ export async function applyJob(
     return { ok: false, error: msg };
   }
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Clinic updates application status
+// Allowed transitions:
+//   pending      → shortlisted | rejected
+//   shortlisted  → interviewing | rejected
+//   interviewing → hired | rejected
+//   hired / rejected / withdrawn = final (no changes)
+// ═══════════════════════════════════════════════════════════════════════════
+const APP_STATUSES = [
+  "pending", "shortlisted", "interviewing", "hired", "rejected", "withdrawn",
+] as const;
+type AppStatus = (typeof APP_STATUSES)[number];
+
+const FINAL_STATUSES: ReadonlySet<AppStatus> = new Set(["hired", "rejected", "withdrawn"]);
+
+export async function updateApplicationStatus(
+  applicationId: string,
+  newStatus: AppStatus,
+): Promise<{ ok: boolean; error?: string }> {
+  const session = await auth();
+  if (!session?.user?.id) return { ok: false, error: "กรุณาเข้าสู่ระบบ" };
+
+  if (!APP_STATUSES.includes(newStatus))
+    return { ok: false, error: "สถานะไม่ถูกต้อง" };
+
+  const clinic = await db.query.clinicProfiles.findFirst({
+    where: eq(clinicProfiles.userId, session.user.id),
+    columns: { id: true },
+  });
+  if (!clinic) return { ok: false, error: "ไม่พบคลินิก" };
+
+  // Verify the application belongs to one of this clinic's jobs
+  const rows = await db
+    .select({
+      currentStatus: applications.status,
+      clinicId: jobs.clinicId,
+    })
+    .from(applications)
+    .innerJoin(jobs, eq(jobs.id, applications.jobId))
+    .where(eq(applications.id, applicationId))
+    .limit(1);
+
+  if (rows.length === 0) return { ok: false, error: "ไม่พบใบสมัคร" };
+  const { currentStatus, clinicId } = rows[0];
+
+  if (clinicId !== clinic.id) return { ok: false, error: "ไม่มีสิทธิ์แก้ใบสมัครนี้" };
+  if (FINAL_STATUSES.has(currentStatus as AppStatus))
+    return { ok: false, error: `สถานะปัจจุบันเปลี่ยนไม่ได้แล้ว` };
+
+  await db.update(applications)
+    .set({
+      status: newStatus,
+      statusUpdatedAt: new Date(),
+      statusUpdatedBy: session.user.id,
+    })
+    .where(eq(applications.id, applicationId));
+
+  revalidatePath("/clinic/applications");
+  revalidatePath("/clinic/jobs");
+  revalidatePath("/candidate");
+  return { ok: true };
+}
